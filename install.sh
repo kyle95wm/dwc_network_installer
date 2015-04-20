@@ -221,7 +221,7 @@ else
 echo "Mods diabled $mod1 $mod2"
 fi
 echo "Uninstalling packages now"
-apt-get remove apache2 python-twisted dnsmasq git -y >/dev/null
+apt-get remove apache2 python-twisted dnsmasq git -y --purge >/dev/null
 echo "Packages removed...."
 clear
 echo "Deleting dwc_network_server_emulator git clone....."
