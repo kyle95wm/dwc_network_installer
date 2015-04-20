@@ -293,7 +293,7 @@ echo "Copying virtual hosts to sites-available for virtual hosting of the server
 cp $vh/$vh1 $apache/$vh1.conf
 cp $vh/$vh2 $apache/$vh2.conf
 cp $vh/$vh3 $apache/$vh3.conf
-cp $vh/$vh4 $apache/$vh4
+cp $vh/$vh4 $apache/$vh4.conf
 sleep 5s
 echo "Enabling virtual hosts....."
 a2ensite $vh1 $vh2 $vh3 $vh4
