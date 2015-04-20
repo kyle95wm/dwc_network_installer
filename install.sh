@@ -2,11 +2,11 @@
 #Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 apache="/etc/apache2/sites-available" #This is the directory where sites are kept in case they need to be disabled in Apache
-vh="./dwc_network_server_emulator/tools/apache-hosts" #This folder is in the root directory of this script and is required for it to copy the files over
-vh1="gamestats2.gs.nintendowifi.net.conf" #This is the first virtual host file
-vh2="gamestats.gs.nintendowifi.net.conf" #This is the second virtual host file
-vh3="nas-naswii-dls1-conntest.nintendowifi.net.conf" #This is the third virtual host file
-vh4="sake.gs.nintendowifi.net.conf" #This is the fourth virtual host file
+vh="$PWD/dwc_network_server_emulator/tools/apache-hosts" #This folder is in the root directory of this script and is required for it to copy the files over
+vh1="gamestats2.gs.nintendowifi.net" #This is the first virtual host file
+vh2="gamestats.gs.nintendowifi.net" #This is the second virtual host file
+vh3="nas-naswii-dls1-conntest.nintendowifi.net" #This is the third virtual host file
+vh4="sake.gs.nintendowifi.net" #This is the fourth virtual host file
 mod1="proxy" #This is a proxy mod that is dependent on the other 2
 mod2="proxy_http" #This is related to mod1
 fqdn="localhost" #This variable fixes the fqdn error in Apache
@@ -67,10 +67,10 @@ clear
 echo "Setting up Apache....."
 echo "Copying virtual hosts to sites-available for virtual hosting of the server"
 #The next several lines will copy the Nintendo virtual host files to sites-available in Apache's directory
-cp $vh/$vh1 $apache/$vh1
-cp $vh/$vh2 $apache/$vh2
-cp $vh/$vh3 $apache/$vh3
-cp $vh/$vh4 $apache/$vh4
+cp $vh/$vh1 $apache/$vh1.conf
+cp $vh/$vh2 $apache/$vh2.conf
+cp $vh/$vh3 $apache/$vh3.conf
+cp $vh/$vh4 $apache/$vh4.conf
 sleep 5s
 echo "Enabling virtual hosts....."
 a2ensite $vh1 $vh2 $vh3 $vh4
@@ -180,25 +180,25 @@ else
 echo "Virtual hosts diabled"
 echo "$vh1 $vh2 $vh3 $vh4"
 echo "Now deleting from sites-available....."
-rm -f $apache/$vh1
+rm -f $apache/$vh1.conf
 if [ $? != "0" ] ; then
-echo "ERROR on deleting $vh1"
+echo "ERROR on deleting $vh1.conf"
 else
 echo "OK!"
 fi
-rm -f $apache/$vh2
+rm -f $apache/$vh2.conf
 if [ $? != "0" ] ; then
 echo "ERROR on deleting $vh2"
 else
 echo "OK!"
 fi
-rm -f $apache/$vh3
+rm -f $apache/$vh3.conf
 if [ $? != "0" ] ; then
-echo "ERROR on deleting $vh3"
+echo "ERROR on deleting $vh3.conf"
 else
 echo "OK!"
 fi
-rm -f $apache/$vh4
+rm -f $apache/$vh4.conf
 if [ $? != "0" ] ; then
 echo "ERROR on deleting $vh4"
 else
@@ -219,7 +219,7 @@ apt-get remove apache2 python-twisted dnsmasq git -y >/dev/null
 echo "Packages removed...."
 clear
 echo "Deleting dwc_network_server_emulator git clone....."
-rm -r -f ./dwc_network_server_emulator
+rm -r -f $PWD/dwc_network_server_emulator
 if [ $? != "0" ] ; then
 echo "Something went wrong! Please delete the directory yourself."
 else
@@ -290,9 +290,9 @@ clear
 echo "Now that that's out of the way, let's do some apache stuff"
 echo "Copying virtual hosts to sites-available for virtual hosting of the server"
 #The next several lines will copy the Nintendo virtual host files to sites-available in Apache's directory
-cp $vh/$vh1 $apache/$vh1
-cp $vh/$vh2 $apache/$vh2
-cp $vh/$vh3 $apache/$vh3
+cp $vh/$vh1 $apache/$vh1.conf
+cp $vh/$vh2 $apache/$vh2.conf
+cp $vh/$vh3 $apache/$vh3.conf
 cp $vh/$vh4 $apache/$vh4
 sleep 5s
 echo "Enabling virtual hosts....."
