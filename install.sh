@@ -15,6 +15,15 @@ if [ "$UID" -ne "$ROOT_UID" ] ; then #if the user ID is not root...
 echo "You must be root to do that!" #Tell the user they must be root
 exit 1 #Exits with an error
 fi #End of if statement
+ls |grep install.sh
+if [ $? != "0" ] ; then
+echo "Busted! Please run this script in the current directory where it is located."
+exit 1
+else
+echo "Script confirmed present"
+echo "Let's continue..."
+sleep 3s
+fi
 echo "Checking for github package....."
 dpkg -L git >/dev/null
 if [ $? != "0" ] ; then
@@ -58,10 +67,10 @@ clear
 echo "Setting up Apache....."
 echo "Copying virtual hosts to sites-available for virtual hosting of the server"
 #The next several lines will copy the Nintendo virtual host files to sites-available in Apache's directory
-cp ./$vh/$vh1 $apache/$vh1
-cp ./$vh/$vh2 $apache/$vh2
-cp ./$vh/$vh3 $apache/$vh3
-cp ./$vh/$vh4 $apache/$vh4
+cp $vh/$vh1 $apache/$vh1
+cp $vh/$vh2 $apache/$vh2
+cp $vh/$vh3 $apache/$vh3
+cp $vh/$vh4 $apache/$vh4
 sleep 5s
 echo "Enabling virtual hosts....."
 a2ensite $vh1 $vh2 $vh3 $vh4
@@ -135,14 +144,13 @@ echo "Please type your user name: "
 read -e USR #Waits for username
 echo "Please enter the password you want to use: "
 read -s PASS #Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
-cat > ./adminpageconf.json <<EOF #Adds the recorded login information to a new file called "adminpageconf.json"
+cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF #Adds the recorded login information to a new file called "adminpageconf.json"
 {"username":"$USR","password":"$PASS"}
 EOF
 echo "Username and password configured!"
 echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
 clear
-echo "Now, I BELIEVE everything should be in working order. If not, you might have to do some troubleshooting"
-echo "Assuming my coding hasnt gotten the best of me, you should be in the directory with all the python script along with a new .json file for the admin page info"
+echo "Everything should be set up now"
 echo "I will now quit...."
 exit 0
 fi
@@ -154,7 +162,7 @@ read -s PASS #Waits for password - NOTE: nothing will show up while typing just 
 cat > ./adminpageconf.json <<EOF #Adds the recorded login information to a new file called "adminpageconf.json"
 {"username":"$USR","password":"$PASS"}
 EOF
-echo "Username and password set!"
+echo "Username and password changed!"
 echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
 fi
 if [ $REPLY == "3" ] ; then
@@ -207,15 +215,18 @@ else
 echo "Mods diabled $mod1 $mod2"
 fi
 echo "Uninstalling packages now"
-apt-get remove apache2 python-twisted dnsmasq -y >/dev/null
+apt-get remove apache2 python-twisted dnsmasq git -y >/dev/null
 echo "Packages removed...."
 clear
+echo "Deleting dwc_network_server_emulator git clone....."
+rm -r -f ./dwc_network_server_emulator
+if [ $? != "0" ] ; then
+echo "Something went wrong! Please delete the directory yourself."
+else
+echo "git clone deleted successfully...."
+echo
+fi
 echo "Congrats! You just completly uninstalled your server."
-echo "The only command left to type is"
-echo "rm -r -f dwc_network_server_emulator"
-echo "I will exit this script now so you can go do that but remember to"
-echo "cd .."
-echo "first!"
 exit 0
 fi
 if [ $REPLY == "5" ] ; then
@@ -238,11 +249,15 @@ else
 echo "Mods diabled $mod1 $mod2"
 fi
 echo "Okay! Well that's pretty much it."
-echo "The only command left to type is"
-echo "rm -r -f dwc_network_server_emulator"
-echo "I will exit this script now so you can go do that but remember to"
-echo "cd .."
-echo "first!"
+clear
+echo "Deleting dwc_network_server_emulator git clone....."
+rm -r -f ./dwc_network_server_emulator
+if [ $? != "0" ] ; then
+echo "Something went wrong! Please delete the directory yourself."
+else
+echo "git clone deleted successfully...."
+echo
+fi
 exit 0
 fi
 if [ $REPLY == "1" ] ; then
@@ -255,7 +270,6 @@ exit 1
 else
 echo "You got it! Let's-a-go!"
 fi
-echo "Okay! Gotta love when a plan comes together!"
 echo "Let me install a few upgrade and packages on your system for you...."
 echo "If you already have a package installed, I'll simply skip over it or upgrade it"
 apt-get update -y --fix-missing #Fixes missing apt-get repository errors on some Linux distributions
@@ -276,10 +290,10 @@ clear
 echo "Now that that's out of the way, let's do some apache stuff"
 echo "Copying virtual hosts to sites-available for virtual hosting of the server"
 #The next several lines will copy the Nintendo virtual host files to sites-available in Apache's directory
-cp ./$vh/$vh1 $apache/$vh1
-cp ./$vh/$vh2 $apache/$vh2
-cp ./$vh/$vh3 $apache/$vh3
-cp ./$vh/$vh4 $apache/$vh4
+cp $vh/$vh1 $apache/$vh1
+cp $vh/$vh2 $apache/$vh2
+cp $vh/$vh3 $apache/$vh3
+cp $vh/$vh4 $apache/$vh4
 sleep 5s
 echo "Enabling virtual hosts....."
 a2ensite $vh1 $vh2 $vh3 $vh4
@@ -339,14 +353,12 @@ echo "Please type your user name: "
 read -e USR #Waits for username
 echo "Please enter the password you want to use: "
 read -s PASS #Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
-cat > ./adminpageconf.json <<EOF #Adds the recorded login information to a new file called "adminpageconf.json"
+cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF #Adds the recorded login information to a new file called "adminpageconf.json"
 {"username":"$USR","password":"$PASS"}
 EOF
 echo "Username and password configured!"
 echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
 clear
-echo "Now, I BELIEVE everything should be in working order. If not, you might have to do some troubleshooting"
-echo "Assuming my coding hasnt gotten the best of me, you should be in the directory with all the python script along with a new .json file for the admin page info"
-echo "I will now quit...."
+echo "setup complete! quitting now...."
 fi
 exit 0
