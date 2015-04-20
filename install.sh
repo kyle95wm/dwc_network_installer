@@ -24,6 +24,15 @@ echo "Script confirmed present"
 echo "Let's continue..."
 sleep 3s
 fi
+echo "Checking for apt...."
+if [ -d "/etc/apt" ] ; then
+echo "apt-get detected"
+else
+echo "apt not detected. This means your OS is not supported by this script."
+echo "Please consider running Ubuntu or Raspbian or any other Debian distro"
+echo "that supports apt-get as the package manager."
+exit 1
+fi
 echo "Checking for github package....."
 dpkg -L git >/dev/null
 if [ $? != "0" ] ; then
@@ -54,6 +63,13 @@ echo "<<<<<<<<PROBLEM CLONING GIT>>>>>>>>"
 echo "Exiting now...."
 exit 1
 fi
+echo "Making sure dwc_network_server_emulator is owned by $USER and the group"
+chown $USER:USER $PWD/dwc_network_server_emulator -R >/dev/null
+if [ $? != "0" ] ; then
+echo "Error in running chown. Please look into this youself."
+else
+echo "I've set the ownership of the server git clone to you."
+fi
 echo
 echo
 echo
@@ -67,7 +83,40 @@ echo "4) Full Uninstall - deletes everything"
 echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
 echo "disable the modules that were enabled"
 echo "6) Partial Install - sets up apache and dnsmasq assuming they're already installed"
+echo "7) BONUS - Install a cls command to clear the terminl and the scroll back"
 read -p "What would you like to do? "
+until [ $REPLY -le "7" ] ; do
+clear
+echo "========MENU========"
+echo "1) Install the server [only run once!]"
+echo "2) Change admin page username/password"
+echo "3) Exit"
+echo "4) Full Uninstall - deletes everything"
+echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
+echo "disable the modules that were enabled"
+echo "6) Partial Install - sets up apache and dnsmasq assuming they're already"
+echo "7) BONUS - Install a cls command to clear the terminl and the scroll back"
+echo
+echo
+echo "$REPLY is not a valid entry"
+read -p "What would you like to do? "
+done
+if [ $REPLY == "7" ] ; then
+echo "Checking for /usr/local/bin"
+fi
+if [ ! -d "/usr/local/bin" ] ; then
+echo "Sorry! Looks like your OS doesn' have a /usr/local/bin directory"
+exit 1
+else
+echo "/usr/local/bin found! Installing the bin"
+cat > /usr/local/bin/cls <<EOF
+#!/bin/bash
+clear
+printf '\033[3J'
+EOF
+chmod +x /usr/local/bin/cls
+echo "Installation complete! Feel free to try out the new cls command any time"
+fi
 if [ $REPLY == "6" ] ; then
 clear
 echo "Setting up Apache....."
@@ -156,6 +205,13 @@ EOF
 echo "Username and password configured!"
 echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
 clear
+echo "Making sure dwc_network_server_emulator is owned by $USER and the group $USER"
+chown $USER:$USER $PWD/dwc_network_server_emulator -R >/dev/null
+if [ $? != "0" ] ; then
+echo "Error in running chown. Please look into this youself."
+else
+echo "I've set the ownership of the server git clone to you."
+fi
 echo "Everything should be set up now"
 echo "I will now quit...."
 exit 0
@@ -170,6 +226,13 @@ cat > $PWD/dwc_network_server_emulator/adminpageconf.json <<EOF #Adds the record
 EOF
 echo "Username and password changed!"
 echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
+echo "Making sure dwc_network_server_emulator is owned by $USER and the group"
+chown $USER:$USER $PWD/dwc_network_server_emulator -R >/dev/null
+if [ $? != "0" ] ; then
+echo "Error in running chown. Please look into this youself."
+else
+echo "I've set the ownership of the server git clone to you."
+fi
 fi
 if [ $REPLY == "3" ] ; then
 exit
@@ -368,6 +431,13 @@ cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF #Adds the recorded 
 EOF
 echo "Username and password configured!"
 echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
+echo "Making sure dwc_network_server_emulator is owned by $USER and the group"
+chown $USER:$USER $PWD/dwc_network_server_emulator -R >/dev/null
+if [ $? != "0" ] ; then
+echo "Error in running chown. Please look into this youself."
+else
+echo "I've set the ownership of the server git clone to you."
+fi
 clear
 echo "setup complete! quitting now...."
 fi
