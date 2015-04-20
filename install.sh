@@ -156,7 +156,7 @@ echo "Please type your user name: "
 read -e USR #Waits for username
 echo "Please enter the password you want to use: "
 read -s PASS #Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
-cat > ./adminpageconf.json <<EOF #Adds the recorded login information to a new file called "adminpageconf.json"
+cat > $PWD/dwc_network_server_emulator/adminpageconf.json <<EOF #Adds the recorded login information to a new file called "adminpageconf.json"
 {"username":"$USR","password":"$PASS"}
 EOF
 echo "Username and password changed!"
