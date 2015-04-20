@@ -35,16 +35,13 @@ fi
 echo
 echo
 echo
+if [ -d "dwc_network_server_emulator" ]; then
+echo "No need to re-clone"
+else
 echo "Cloning polaris-/dwc_network_server_emulator"
-git clone https://github.com/polaris-/dwc_network_server_emulator.git >/dev/null
-if [ $? != "0" ] ; then
-echo "<<<<<<<<PROBLEM>>>>>>>> - Repo clone failed!"
-sleep 2s
-echo "Cloning kyle95wm/dwc_network_server_emulator instead...."
-git clone http://github.com/kyle95wm/dwc_network_server_emulator.git >/dev/null
 fi
 if [ $? != "0" ] ; then
-echo "<<<<<<<<PROBLEM>>>>>>>> - Secondary repo clone failed!"
+echo "<<<<<<<<PROBLEM>>>>>>>> - GitHub error!"
 echo "Exiting now...."
 exit 1
 fi
