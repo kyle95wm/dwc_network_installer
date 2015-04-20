@@ -224,7 +224,7 @@ echo "Uninstalling packages now"
 apt-get remove apache2 python-twisted dnsmasq git -y --purge
 echo "Packages removed...."
 echo "Now let's remove some left-over packages"
-apt-get autoremove --purge
+apt-get autoremove -y --purge
 echo "done!"
 sleep 4s
 clear
