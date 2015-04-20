@@ -223,6 +223,10 @@ fi
 echo "Uninstalling packages now"
 apt-get remove apache2 python-twisted dnsmasq git -y --purge
 echo "Packages removed...."
+echo "Now let's remove some left-over packages"
+apt-get autoremove --purge
+echo "done!"
+sleep 4s
 clear
 echo "Deleting dwc_network_server_emulator git clone....."
 rm -r -f $PWD/dwc_network_server_emulator
