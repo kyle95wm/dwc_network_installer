@@ -46,7 +46,7 @@ echo "<<<<<<<<PROBLEM>>>>>>>> - GitHub error!"
 echo "Removing/purgig git now...."
 apt-get install git -y >/dev/null
 apt-get remove git -y --purge >/dev/null
-apt-get install git >/dev/null
+apt-get install git -y >/dev/null
 git clone http://github.com/polaris-/dwc_network_server_emulator
 fi
 if [ $? != "0" ] ; then
