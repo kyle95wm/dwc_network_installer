@@ -39,9 +39,18 @@ if [ -d "dwc_network_server_emulator" ]; then
 echo "No need to re-clone"
 else
 echo "Cloning polaris-/dwc_network_server_emulator"
+git clone http://github.com/polaris-/dwc_network_server_emulator
 fi
 if [ $? != "0" ] ; then
 echo "<<<<<<<<PROBLEM>>>>>>>> - GitHub error!"
+echo "Removing/purgig git now...."
+apt-get install git -y >/dev/null
+apt-get remove git -y --purge >/dev/null
+apt-get install git >/dev/null
+git clone http://github.com/polaris-/dwc_network_server_emulator
+fi
+if [ $? != "0" ] ; then
+echo "<<<<<<<<PROBLEM CLONING GIT>>>>>>>>"
 echo "Exiting now...."
 exit 1
 fi
