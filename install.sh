@@ -214,7 +214,7 @@ echo "Done!"
 sleep 2s
 fi
 echo "Disabling modules...."
-a2dismod $mod1 $mod2
+a2dismod $mod2 $mod1
 if [ $? != "0" ] ; then
 echo "Okay we broke it again.... dont worry about it"
 else
@@ -248,7 +248,7 @@ echo "$vh1 $vh2 $vh3 $vh4"
 sleep 2s
 fi
 echo "Disabling modules...."
-a2dismod $mod1 $mod2
+a2dismod $mod2 $mod1
 if [ $? != "0" ] ; then
 echo "Okay we broke it again.... dont worry about it"
 else
