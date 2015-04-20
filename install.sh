@@ -76,7 +76,6 @@ echo "4) Full Uninstall - deletes everything"
 echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
 echo "disable the modules that were enabled"
 echo "6) Partial Install - sets up apache and dnsmasq assuming they're already installed"
-echo "7) BONUS - Install a cls command to clear the terminl and the scroll back"
 read -p "What would you like to do? "
 until [ $REPLY -le "6" ] ; do
 clear
