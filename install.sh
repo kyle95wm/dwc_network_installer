@@ -97,10 +97,10 @@ clear
 echo "Setting up Apache....."
 echo "Copying virtual hosts to sites-available for virtual hosting of the server"
 #The next several lines will copy the Nintendo virtual host files to sites-available in Apache's directory
-cp $vh/$vh1 $apache/$vh1.conf
-cp $vh/$vh2 $apache/$vh2.conf
-cp $vh/$vh3 $apache/$vh3.conf
-cp $vh/$vh4 $apache/$vh4.conf
+cp $vh/$vh1 $apache/$vh1
+cp $vh/$vh2 $apache/$vh2
+cp $vh/$vh3 $apache/$vh3
+cp $vh/$vh4 $apache/$vh4
 sleep 5s
 echo "Enabling virtual hosts....."
 a2ensite $vh1 $vh2 $vh3 $vh4
@@ -324,10 +324,10 @@ clear
 echo "Now that that's out of the way, let's do some apache stuff"
 echo "Copying virtual hosts to sites-available for virtual hosting of the server"
 #The next several lines will copy the Nintendo virtual host files to sites-available in Apache's directory
-cp $vh/$vh1 $apache/$vh1.conf
-cp $vh/$vh2 $apache/$vh2.conf
-cp $vh/$vh3 $apache/$vh3.conf
-cp $vh/$vh4 $apache/$vh4.conf
+cp $vh/$vh1 $apache/$vh1
+cp $vh/$vh2 $apache/$vh2
+cp $vh/$vh3 $apache/$vh3
+cp $vh/$vh4 $apache/$vh4
 sleep 5s
 echo "Enabling virtual hosts....."
 a2ensite $vh1 $vh2 $vh3 $vh4
