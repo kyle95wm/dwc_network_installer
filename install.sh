@@ -76,8 +76,9 @@ echo "4) Full Uninstall - deletes everything"
 echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
 echo "disable the modules that were enabled"
 echo "6) Partial Install - sets up apache and dnsmasq assuming they're already installed"
+echo "7) Update the server - This will back up your profiles database, delete the git clone and grab a new one."
 read -p "What would you like to do? "
-until [ $REPLY -le "6" ] ; do
+until [ $REPLY -le "7" ] ; do
 clear
 echo "========MENU========"
 echo "1) Install the server [only run once!]"
@@ -87,11 +88,41 @@ echo "4) Full Uninstall - deletes everything"
 echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
 echo "disable the modules that were enabled"
 echo "6) Partial Install - sets up apache and dnsmasq assuming they're already"
+echo "7) Update the server - This will back up your profiles database, delete the git clone and grab a new one."
 echo
 echo
 echo "$REPLY is not a valid entry"
 read -p "What would you like to do? "
 done
+if [ $REPLY == "7" ] ; then
+clear
+if [ -f "$PWD/dwc_network_server_emulator/gpcm.db" ] ; then
+echo "Backing up the database file..."
+cp $PWD/dwc_network_server_emulator/gpcm.db $PWD/gpcm.db >/dev/null
+fi
+if [ -d "$PWD/dwc_network_server_emulator/logs" ] ; then
+cp -R $PWD/dwc_network_server_emulator/logs $PWD/logs
+fi
+if [ ! -f "$PWD/dwc_network_server_emulator/adminpageconf.json" ] ; then
+echo "No admin page login file detected. Be sure that you run option #2 when running this script again."
+else
+echo "Backing up admin page login details..."
+cp $PWD/dwc_network_server_emulator/adminpageconf.json $PWD/adminpageconf.json
+echo "Backup complete!"
+fi
+echo "Now let's nuke the git clone and grab a new copy"
+rm -r -f $PWD/dwc_network_server_emulator
+git clone http://github.com/polaris-/dwc_network_server_emulator.git
+echo "Update complete!"
+if [ -d "$PWD/logs" ] ; then
+mv $PWD/logs $PWD/dwc_network_server_emulator/logs
+fi
+if [ -f "$PWD/adminpageconf.json" ] ; then
+mv $PWD/adminpageconf.json $PWD/dwc_network_server_emulator/adminpageconf.json
+fi
+echo "-done!-"
+fi
+exit 0
 if [ $REPLY == "6" ] ; then
 clear
 echo "Setting up Apache....."
