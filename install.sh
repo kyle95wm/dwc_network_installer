@@ -340,7 +340,6 @@ echo "Enabling virtual hosts....."
 a2ensite $vh1 $vh2 $vh3 $vh4
 if [ $? != "0" ] ; then
 echo "Oops! Something went wrong here!"
-echo "Oops! Something went wrong here!"
 mv $apache/$vh1 $apache/$vh1.conf
 mv $apache/$vh2 $apache/$vh2.conf
 mv $apache/$vh3 $apache/$vh3.conf
