@@ -3,10 +3,14 @@
 ROOT_UID="0"
 apache="/etc/apache2/sites-available" #This is the directory where sites are kept in case they need to be disabled in Apache
 vh="$PWD/dwc_network_server_emulator/tools/apache-hosts" #This folder is in the root directory of this script and is required for it to copy the files over
-vh1="gamestats2.gs.nintendowifi.net" #This is the first virtual host file
-vh2="gamestats.gs.nintendowifi.net" #This is the second virtual host file
-vh3="nas-naswii-dls1-conntest.nintendowifi.net" #This is the third virtual host file
-vh4="sake.gs.nintendowifi.net" #This is the fourth virtual host file
+vh1="gamestats2.gs.nintendowifi.net.conf" #This is the first virtual host file
+vh2="gamestats.gs.nintendowifi.net.conf" #This is the second virtual host file
+vh3="nas-naswii-dls1-conntest.nintendowifi.net.conf" #This is the third virtual host file
+vh4="sake.gs.nintendowifi.net.conf" #This is the fourth virtual host file
+vh5="gamestats2.gs.nintendowifi.net" #Fallback for vh1
+vh6="gamestats.gs.nintendowifi.net" #Fallback for vh2
+vh7="nas-naswii-dls1-conntest.nintendowifi.net" #Fallback for vh3
+vh8="sake.gs.nintendowifi.net" #Fallback for vh4
 mod1="proxy" #This is a proxy mod that is dependent on the other 2
 mod2="proxy_http" #This is related to mod1
 fqdn="localhost" #This variable fixes the fqdn error in Apache
@@ -106,13 +110,13 @@ echo "Enabling virtual hosts....."
 a2ensite $vh1 $vh2 $vh3 $vh4
 if [ $? != "0" ] ; then
 echo "Oops! Something went wrong here!"
-mv $apache/$vh1 $apache/$vh1.conf
-mv $apache/$vh2 $apache/$vh2.conf
-mv $apache/$vh3 $apache/$vh3.conf
-mv $apache/$vh4 $apache/$vh4.conf
-a2ensite $vh1 $vh2 $vh3 $vh4
+mv $apache/$vh1 $apache/$vh5
+mv $apache/$vh2 $apache/$vh6
+mv $apache/$vh3 $apache/$vh7
+mv $apache/$vh4 $apache/$vh8
+a2ensite $vh5 $vh6 $vh7 $vh8
 echo "and just for good measure...."
-a2ensite $vh1.conf $vh2.conf $vh3.conf $vh4.conf
+a2ensite $vh5.conf $vh6.conf $vh7.conf $vh8.conf
 else
 echo "It worked!"
 fi
@@ -213,31 +217,37 @@ echo "Disabling Apache virtual hosts....."
 a2dissite $vh1 $vh2 $vh3 $vh4
 if [ $? != "0" ] ; then
 echo "Ugh we broke it somehow..... continuing on"
+echo "Trying the backup plan"
+a2dissite $vh5 $vh6 $vh7 $vh8
 else
 echo "Virtual hosts diabled"
 echo "$vh1 $vh2 $vh3 $vh4"
 echo "Now deleting from sites-available....."
-rm -f $apache/$vh1.conf
+rm -f $apache/$vh1
 if [ $? != "0" ] ; then
-echo "ERROR on deleting $vh1.conf"
+echo "ERROR on deleting $vh1 - trying backup"
+rm -f $apache/$vh5
 else
 echo "OK!"
 fi
-rm -f $apache/$vh2.conf
+rm -f $apache/$vh2
 if [ $? != "0" ] ; then
-echo "ERROR on deleting $vh2"
+echo "ERROR on deleting $vh2 - trying backup"
+rm -f $apache/$vh6
 else
 echo "OK!"
 fi
-rm -f $apache/$vh3.conf
+rm -f $apache/$vh3
 if [ $? != "0" ] ; then
-echo "ERROR on deleting $vh3.conf"
+echo "ERROR on deleting $vh3 - trying backup"
+rm -f $apache/$vh7
 else
 echo "OK!"
 fi
-rm -f $apache/$vh4.conf
+rm -f $apache/$vh4
 if [ $? != "0" ] ; then
-echo "ERROR on deleting $vh4"
+echo "ERROR on deleting $vh4 - trying backup"
+rm -f $apache/$vh8
 else
 echo "OK!"
 fi
@@ -277,6 +287,8 @@ echo "Disabling virtual hosts..."
 a2dissite $vh1 $vh2 $vh3 $vh4
 if [ $? != "0" ] ; then
 echo "Ugh we broke it somehow..... continuing on"
+echo "Trying the backup plan"
+a2dissite $vh5 $vh6 $vh7 $vh8
 else
 echo "Virtual hosts diabled"
 echo "$vh1 $vh2 $vh3 $vh4"
@@ -340,13 +352,13 @@ echo "Enabling virtual hosts....."
 a2ensite $vh1 $vh2 $vh3 $vh4
 if [ $? != "0" ] ; then
 echo "Oops! Something went wrong here!"
-mv $apache/$vh1 $apache/$vh1.conf
-mv $apache/$vh2 $apache/$vh2.conf
-mv $apache/$vh3 $apache/$vh3.conf
-mv $apache/$vh4 $apache/$vh4.conf
-a2ensite $vh1 $vh2 $vh3 $vh4
+mv $apache/$vh1 $apache/$vh5
+mv $apache/$vh2 $apache/$vh6
+mv $apache/$vh3 $apache/$vh7
+mv $apache/$vh4 $apache/$vh8
+a2ensite $vh5 $vh6 $vh7 $vh8
 echo "and just for good measure...."
-a2ensite $vh1.conf $vh2.conf $vh3.conf $vh4.conf
+a2ensite $vh5.conf $vh6.conf $vh7.conf $vh8.conf
 else
 echo "It worked!"
 fi
