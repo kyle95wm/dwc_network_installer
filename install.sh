@@ -124,7 +124,7 @@ sleep 5s
 clear
 echo "Now lets enable some modules so we can make all of this work..."
 read -p "Are the proxy and proxy_http modules already enabled? [y/n] "
-if [ $REPLY != "y" ] ; then
+if [ $REPLY == "y" ] ; then
 echo "I won't enable these again since you said the modules are already enabled...."
 echo "If for whatever reason you messed up, type the following command to enable the modules:"
 echo "a2enmod $mod1 $mod2"
@@ -147,7 +147,7 @@ apachectl graceful
 echo "Great! Everything appears to be set up as far as Apache"
 echo "Fixing that nagging Apache FQDN error...."
 read -p "Do you already have a ServerName directive in your /etc/apache2/apache2.conf file? [y/n] "
-if [ $REPLY != "y" ] ; then
+if [ $REPLY == "y" ] ; then
 echo "Okay I won't attempt to fix the error"
 echo "If for whatever reason you need to in the future type the following in to your /etc/apache2/apache2.conf:"
 echo "ServerName localhost"
