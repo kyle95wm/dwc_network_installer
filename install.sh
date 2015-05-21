@@ -14,6 +14,25 @@ vh8="sake.gs.nintendowifi.net" #Fallback for vh4
 mod1="proxy" #This is a proxy mod that is dependent on the other 2
 mod2="proxy_http" #This is related to mod1
 fqdn="localhost" #This variable fixes the fqdn error in Apache
+# Functions
+function menu {
+echo "========MENU========"
+echo "1) Install the server [only run once!]"
+echo "2) Change admin page username/password"
+echo "3) Exit"
+echo "4) Full Uninstall - deletes everything"
+echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
+echo "disable the modules that were enabled"
+echo "6) Partial Install - sets up apache and dnsmasq assuming they're already installed"
+}
+
+function menu_prompt {
+read -p "What would you like to do? "
+}
+
+function menu_error {
+echo "$REPLY is not a valid entry! Please try again."
+}
 #Check if run as root
 if [ "$UID" -ne "$ROOT_UID" ] ; then #if the user ID is not root...
 echo "You must be root to do that!" #Tell the user they must be root
@@ -72,29 +91,13 @@ echo
 echo
 echo
 echo "Hello and welcome to my installation script."
-echo "========MENU========"
-echo "1) Install the server [only run once!]"
-echo "2) Change admin page username/password"
-echo "3) Exit"
-echo "4) Full Uninstall - deletes everything"
-echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
-echo "disable the modules that were enabled"
-echo "6) Partial Install - sets up apache and dnsmasq assuming they're already installed"
-read -p "What would you like to do? "
+menu
+menu_prompt
 until [ $REPLY -le "6" ] ; do
 clear
-echo "========MENU========"
-echo "1) Install the server [only run once!]"
-echo "2) Change admin page username/password"
-echo "3) Exit"
-echo "4) Full Uninstall - deletes everything"
-echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
-echo "disable the modules that were enabled"
-echo "6) Partial Install - sets up apache and dnsmasq assuming they're already"
-echo
-echo
-echo "$REPLY is not a valid entry"
-read -p "What would you like to do? "
+menu
+menu_error
+menu_prompt
 done
 if [ $REPLY == "6" ] ; then
 clear
