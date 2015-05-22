@@ -2,6 +2,7 @@
 #Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 apache="/etc/apache2/sites-available" #This is the directory where sites are kept in case they need to be disabled in Apache
+serverclone=""
 vh="$PWD/dwc_network_server_emulator/tools/apache-hosts" #This folder is in the root directory of this script and is required for it to copy the files over
 vh1="gamestats2.gs.nintendowifi.net.conf" #This is the first virtual host file
 vh2="gamestats.gs.nintendowifi.net.conf" #This is the second virtual host file
@@ -33,9 +34,23 @@ read -p "What would you like to do? "
 function menu_error {
 echo "$REPLY is not a valid entry! Please try again."
 }
+
+function menu_git {
+clear
+echo "Please pick from the list of git clones to use"
+echo "1) Polaris [OFFICIAL REPO]"
+echo "2) kyle95wm/mrbean35000vrjr"
+}
+
+function menu_git_prompt {
+read -p "Please enter a number now: " serverclone
+}
+
 #Check if run as root
 if [ "$UID" -ne "$ROOT_UID" ] ; then #if the user ID is not root...
-echo "You must be root to do that!" #Tell the user they must be root
+echo "You must be root to run this script!" #Tell the user they must be root
+echo "There are some things in this script that require root access (i.e packages, copying files to directories owned by root, etc)"
+echo "Please type 'sudo $0' to run the script as root."
 exit 1 #Exits with an error
 fi #End of if statement
 ls |grep install.sh
@@ -70,19 +85,32 @@ echo
 if [ -d "dwc_network_server_emulator" ]; then
 echo "No need to re-clone"
 else
-echo "Cloning polaris-/dwc_network_server_emulator"
-git clone http://github.com/polaris-/dwc_network_server_emulator
+echo "git clone not detected in $PWD"
 fi
-if [ $? != "0" ] ; then
-echo "<<<<<<<<PROBLEM>>>>>>>> - GitHub error!"
-echo "Removing/purgig git now...."
-apt-get install git -y >/dev/null
-apt-get remove git -y --purge >/dev/null
-apt-get install git -y >/dev/null
+clear
+menu_git
+menu_git_prompt
+if [ $serverclone == 1 ] ; then
+clear
+echo "Cloning the official repo....."
 git clone http://github.com/polaris-/dwc_network_server_emulator
+elif [ $serverclone == 2 ] ; then
+echo "Cloning BeanJr's repository...."
+git clone http://github.com/kyle95wm/dwc_network_server_emulator
+else
+echo "$serverclone is not a valid entry! You must type a number from the list."
+echo "You will not be able to proceed without the git clone!"
+echo "Please re-run this script and try again."
+echo "Exiting...."
+exit 1
 fi
 if [ $? != "0" ] ; then
 echo "<<<<<<<<PROBLEM CLONING GIT>>>>>>>>"
+echo "This may be caused by the github package not being properly installed."
+echo "Please consider re-installing the package manually by typing:"
+echo "apt-get remove git --purge"
+echo "apt-get install git"
+echo "And then try running the script again."
 echo "Exiting now...."
 exit 1
 fi
@@ -424,4 +452,14 @@ echo "NOTE: To get to the admin page type in the IP of your server :9009/banhamm
 clear
 echo "setup complete! quitting now...."
 fi
+clear
+echo "Please note!"
+echo
+echo
+echo "If you performed any installation, please make sure to take ownership of the git clone by typing:"
+echo "sudo chown username:group dwc_network_server_emulator/ -R"
+echo "Replace 'username' and 'group' with your environment."
+echo "If you don't know what your username is type 'who' or 'id'"
+echo "If you don't know what group you are a part of, it is most likely your username."
+echo "Thank you for using my script and have a nice day!"
 exit 0
