@@ -1,8 +1,83 @@
 #!/bin/bash
+### TODO ###
+# -work on updater to make it work properly
+##### UPDATER ###### # NOT FINISHED YET!
+
+#set -o nounset
+#set -o errexit
+
+#SELF=$(basename $0)
+
+# The base location from where to retrieve new versions of this script
+#UPDATE_BASE=http://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/
+
+# Update check
+#function updatecheck() {
+  #SUM_LATEST=$(curl $UPDATE_BASE/versions 2>&1 | grep $SELF | awk '{print $2}')
+  #SUM_SELF=$(tail --lines=+2 "$0" | md5sum | awk '{print $1}')
+  #if [[ "" == $SUM_LATEST ]]; then
+    #echo "No update information is available for '$SELF'" >&2
+
+  #elif [[ "$SUM_LATEST" != "$SUM_SELF" ]]; then
+    #echo "NOTE: New version available!" >&2
+	#runselfupdate
+  #fi
+#}
+
+# Self-update
+#function runselfupdate() {
+  #echo "Performing self-update..."
+
+  #_tempFileName="$0.tmp"
+  #_payloadName="$0.payload"
+
+  # Download new version
+  #echo -n "Downloading latest version..."
+  #if ! wget --quiet --output-document="$_payloadName" $UPDATE_BASE/$SELF ; then
+    #echo "Failed: Error while trying to wget new version!"
+    #echo "File requested: $UPDATE_BASE/$SELF"
+    #exit 1
+  #fi
+  #echo "Done."
+
+  # Restore shebang
+  #_interpreter=$(head --lines=1 "$0")
+  #echo $_interpreter > "$_tempFileName"
+  #tail --lines=+2 "$_payloadName" >> "$_tempFileName"
+  #rm "$_payloadName"
+
+  # Copy over modes from old version
+  #OCTAL_MODE=$(stat -c '%a' $SELF)
+  #if ! chmod $OCTAL_MODE "$_tempFileName" ; then
+    #echo "Failed: Error while trying to set mode on $_tempFileName."
+    #exit 1
+  #fi
+
+  # Spawn update script
+  #cat > updateScript.sh << EOF
+#!/bin/bash
+# Overwrite old file with new
+#if mv "$_tempFileName" "$0"; then
+  #echo "Done."
+  #echo "Update complete."
+  #rm -- \$0
+#else
+  #echo "Failed!"
+#fi
+#EOF
+
+  #echo -n "Inserting update process..."
+  #exec /bin/bash updateScript.sh
+#}
+
+
+##### END OF UPDATER #####
+
 #Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 apache="/etc/apache2/sites-available" #This is the directory where sites are kept in case they need to be disabled in Apache
 serverclone=""
+menuchoice=""
 vh="$PWD/dwc_network_server_emulator/tools/apache-hosts" #This folder is in the root directory of this script and is required for it to copy the files over
 vh1="gamestats2.gs.nintendowifi.net.conf" #This is the first virtual host file
 vh2="gamestats.gs.nintendowifi.net.conf" #This is the second virtual host file
@@ -15,37 +90,8 @@ vh8="sake.gs.nintendowifi.net" #Fallback for vh4
 mod1="proxy" #This is a proxy mod that is dependent on the other 2
 mod2="proxy_http" #This is related to mod1
 fqdn="localhost" #This variable fixes the fqdn error in Apache
-# Functions
-function menu {
-echo "========MENU========"
-echo "1) Install the server [only run once!]"
-echo "2) Change admin page username/password"
-echo "3) Exit"
-echo "4) Full Uninstall - deletes everything"
-echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
-echo "disable the modules that were enabled"
-echo "6) Partial Install - sets up apache and dnsmasq assuming they're already installed"
-}
-
-function menu_prompt {
-read -p "What would you like to do? "
-}
-
-function menu_error {
-echo "$REPLY is not a valid entry! Please try again."
-}
-
-function menu_git {
-clear
-echo "Please pick from the list of git clones to use"
-echo "1) Polaris [OFFICIAL REPO]"
-echo "2) kyle95wm/mrbean35000vrjr"
-}
-
-function menu_git_prompt {
-read -p "Please enter a number now: " serverclone
-}
-
+# Script Functions
+function root_check {
 #Check if run as root
 if [ "$UID" -ne "$ROOT_UID" ] ; then #if the user ID is not root...
 echo "You must be root to run this script!" #Tell the user they must be root
@@ -53,6 +99,8 @@ echo "There are some things in this script that require root access (i.e package
 echo "Please type 'sudo $0' to run the script as root."
 exit 1 #Exits with an error
 fi #End of if statement
+}
+function init {
 ls |grep install.sh
 if [ $? != "0" ] ; then
 echo "Busted! Please run this script in the current directory where it is located."
@@ -86,10 +134,38 @@ if [ -d "dwc_network_server_emulator" ]; then
 echo "No need to re-clone"
 else
 echo "git clone not detected in $PWD"
-fi
 clear
 menu_git
 menu_git_prompt
+git_check
+fi
+}
+function menu {
+echo "========MENU========"
+echo "1) Install the server [only run once!]"
+echo "2) Change admin page username/password"
+echo "3) Exit"
+echo "4) Full Uninstall - deletes everything"
+echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
+echo "disable the modules that were enabled"
+echo "6) Partial Install - sets up apache and dnsmasq assuming they're already installed"
+}
+
+function menu_prompt {
+read -p "What would you like to do? " menuchoice
+}
+
+function menu_error {
+echo "$menuchoice is not a valid entry! Please try again."
+}
+
+function menu_git {
+clear
+echo "Please pick from the list of git clones to use"
+echo "1) Polaris [OFFICIAL REPO]"
+echo "2) kyle95wm/mrbean35000vrjr"
+}
+function git_check {
 if [ $serverclone == 1 ] ; then
 clear
 echo "Cloning the official repo....."
@@ -114,20 +190,12 @@ echo "And then try running the script again."
 echo "Exiting now...."
 exit 1
 fi
-echo
-echo
-echo
-echo
-echo "Hello and welcome to my installation script."
-menu
-menu_prompt
-until [ $REPLY -le "6" ] ; do
-clear
-menu
-menu_error
-menu_prompt
-done
-if [ $REPLY == "6" ] ; then
+}
+function menu_git_prompt {
+read -p "Please enter a number now: " serverclone
+}
+
+function partial_install {
 clear
 echo "Setting up Apache....."
 echo "Copying virtual hosts to sites-available for virtual hosting of the server"
@@ -225,8 +293,9 @@ clear
 echo "Everything should be set up now"
 echo "I will now quit...."
 exit 0
-fi
-if [ $REPLY == "2" ] ; then
+}
+
+function admin_page_credentials {
 echo "Please type your user name: "
 read -e USR #Waits for username
 echo "Please enter the password you want to use: "
@@ -236,11 +305,9 @@ cat > $PWD/dwc_network_server_emulator/adminpageconf.json <<EOF #Adds the record
 EOF
 echo "Username and password changed!"
 echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
-fi
-if [ $REPLY == "3" ] ; then
-exit
-fi
-if [ $REPLY == "4" ] ; then
+}
+
+function full_uninstall {
 clear
 echo "Okay! Here we go!"
 echo "Disabling Apache virtual hosts....."
@@ -310,8 +377,10 @@ echo
 fi
 echo "Congrats! You just completly uninstalled your server."
 exit 0
-fi
-if [ $REPLY == "5" ] ; then
+}
+
+function partial_uninstall {
+
 echo "ah, I see you chose to play it safe"
 echo "Off we go!"
 echo "Disabling virtual hosts..."
@@ -343,8 +412,8 @@ echo "git clone deleted successfully...."
 echo
 fi
 exit 0
-fi
-if [ $REPLY == "1" ] ; then
+}
+function full_install {
 echo "Before we begin, you should know it's best to run this script on a completly squeeky clean install of Linux"
 echo "preferably Ubuntu or Raspbian as some things can go horribly wrong if run on an already configured system"
 read -p "Would you like to continue with the install - at your own risk of course..... [y/n] : "
@@ -451,6 +520,41 @@ echo "Username and password configured!"
 echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
 clear
 echo "setup complete! quitting now...."
+}
+# End of functions
+root_check
+updatecheck
+init
+echo
+echo
+echo
+echo
+echo "Hello and welcome to my installation script."
+menu
+menu_prompt
+until [ $menuchoice -le "6" ] ; do
+clear
+menu
+menu_error
+menu_prompt
+done
+if [ $menuchoice == "6" ] ; then
+partial_install
+fi
+if [ $menuchoice == "2" ] ; then
+admin_page_credentials
+fi
+if [ $menuchoice == "3" ] ; then
+exit
+fi
+if [ $menuchoice == "4" ] ; then
+full_uninstall
+fi
+if [ $menuchoice == "5" ] ; then
+partial_uninstall
+fi
+if [ $menuchoice == "1" ] ; then
+full_install
 fi
 clear
 echo "Please note!"
