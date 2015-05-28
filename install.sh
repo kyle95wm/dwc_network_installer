@@ -523,7 +523,7 @@ echo "setup complete! quitting now...."
 }
 # End of functions
 root_check
-updatecheck
+#updatecheck
 init
 echo
 echo
