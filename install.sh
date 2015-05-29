@@ -1,32 +1,56 @@
 #!/bin/bash
 # DWC Network Installer script by kyle95wm/beanjr
-# Version 2.1
-#Variables used by the script in various sections to pre-fill long commandds
+# Version 2.2
+# Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
-apache="/etc/apache2/sites-available" #This is the directory where sites are kept in case they need to be disabled in Apache
+apache="/etc/apache2/sites-available" # This is the directory where sites are kept in case they need to be disabled in Apache
 serverclone=""
 menuchoice=""
-vh="$PWD/dwc_network_server_emulator/tools/apache-hosts" #This folder is in the root directory of this script and is required for it to copy the files over
-vh1="gamestats2.gs.nintendowifi.net.conf" #This is the first virtual host file
-vh2="gamestats.gs.nintendowifi.net.conf" #This is the second virtual host file
-vh3="nas-naswii-dls1-conntest.nintendowifi.net.conf" #This is the third virtual host file
-vh4="sake.gs.nintendowifi.net.conf" #This is the fourth virtual host file
-vh5="gamestats2.gs.nintendowifi.net" #Fallback for vh1
-vh6="gamestats.gs.nintendowifi.net" #Fallback for vh2
-vh7="nas-naswii-dls1-conntest.nintendowifi.net" #Fallback for vh3
-vh8="sake.gs.nintendowifi.net" #Fallback for vh4
-mod1="proxy" #This is a proxy mod that is dependent on the other 2
-mod2="proxy_http" #This is related to mod1
-fqdn="localhost" #This variable fixes the fqdn error in Apache
+vh="$PWD/dwc_network_server_emulator/tools/apache-hosts" # This folder is in the root directory of this script and is required for it to copy the files over
+vh1="gamestats2.gs.nintendowifi.net.conf" # This is the first virtual host file
+vh2="gamestats.gs.nintendowifi.net.conf" # This is the second virtual host file
+vh3="nas-naswii-dls1-conntest.nintendowifi.net.conf" # This is the third virtual host file
+vh4="sake.gs.nintendowifi.net.conf" # This is the fourth virtual host file
+vh5="gamestats2.gs.nintendowifi.net" # Fallback for vh1
+vh6="gamestats.gs.nintendowifi.net" # Fallback for vh2
+vh7="nas-naswii-dls1-conntest.nintendowifi.net" # Fallback for vh3
+vh8="sake.gs.nintendowifi.net" # Fallback for vh4
+mod1="proxy" # This is a proxy mod that is dependent on the other 2
+mod2="proxy_http" # This is related to mod1
+fqdn="localhost" # This variable fixes the fqdn error in Apache
+UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
+UPDATE_FILE="$0.tmp"
 # Script Functions
+
 function root_check {
-#Check if run as root
-if [ "$UID" -ne "$ROOT_UID" ] ; then #if the user ID is not root...
-echo "You must be root to run this script!" #Tell the user they must be root
+# Check if run as root
+if [ "$UID" -ne "$ROOT_UID" ] ; then # if the user ID is not root...
+echo "You must be root to run this script!" # Tell the user they must be root
 echo "There are some things in this script that require root access (i.e packages, copying files to directories owned by root, etc)"
 echo "Please type 'sudo $0' to run the script as root."
-exit 1 #Exits with an error
-fi #End of if statement
+exit 1 # Exits with an error
+fi # End of if statement
+}
+function update {
+# The following lines will check for an update to this script if the -s switch
+# is not used.
+# Original code by Dennis Simpson
+# Modified by Kyle Warwick-Mathieu
+if [ "$1" != "-s" ]; then
+	echo "Checking if script is up to date, please wait"
+	wget -nv -O $UPDATE_FILE $UPDATE_URL >& /dev/null
+	diff $0 $UPDATE_FILE >& /dev/null
+	if [ "$?" != "0" -a -s $UPDATE_FILE ]; then
+		mv $UPDATE_FILE $0
+		chmod +x $0
+		echo "$0 updated"
+		$0 -s
+		exit
+	else
+		echo "No updates available"
+		rm $UPDATE_FILE
+	fi
+fi
 }
 function init {
 ls |grep install.sh
@@ -127,7 +151,7 @@ function partial_install {
 clear
 echo "Setting up Apache....."
 echo "Copying virtual hosts to sites-available for virtual hosting of the server"
-#The next several lines will copy the Nintendo virtual host files to sites-available in Apache's directory
+# The next several lines will copy the Nintendo virtual host files to sites-available in Apache's directory
 cp $vh/$vh1 $apache/$vh1
 cp $vh/$vh2 $apache/$vh2
 cp $vh/$vh3 $apache/$vh3
@@ -183,10 +207,10 @@ cat >>/etc/apache2/apache2.conf <<EOF
 ServerName $fqdn
 EOF
 fi
-#That line is a little tricky to explain. Basically we're adding text to the end of the file that tells Apache the server name is localhost (your local machine).
-service apache2 restart #Restart Apache
-service apache2 reload #Reload Apache's config
-apachectl graceful #Another way to reload Apache because I'm paranoid
+# That line is a little tricky to explain. Basically we're adding text to the end of the file that tells Apache the server name is localhost (your local machine).
+service apache2 restart # Restart Apache
+service apache2 reload # Reload Apache's config
+apachectl graceful # Another way to reload Apache because I'm paranoid
 echo "If any errors occour, please look into this yourself"
 sleep 5s
 clear
@@ -199,7 +223,7 @@ echo "your LAN IP is"
 hostname  -I | cut -f1 -d' '
 echo "Please type in either your LAN or external IP"
 read -e IP
-cat >>/etc/dnsmasq.conf <<EOF #Adds your IP you provide to the end of the DNSMASQ config file
+cat >>/etc/dnsmasq.conf <<EOF
 address=/nintendowifi.net/$IP
 EOF
 clear
@@ -209,9 +233,9 @@ service dnsmasq restart
 echo "Now, let's set up the admin page login info...."
 sleep 3s
 echo "Please type your user name: "
-read -e USR #Waits for username
+read -e USR # Waits for username
 echo "Please enter the password you want to use: "
-read -s PASS #Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
+read -s PASS # Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
 cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF #Adds the recorded login information to a new file called "adminpageconf.json"
 {"username":"$USR","password":"$PASS"}
 EOF
@@ -225,10 +249,10 @@ exit 0
 
 function admin_page_credentials {
 echo "Please type your user name: "
-read -e USR #Waits for username
+read -e USR # Waits for username
 echo "Please enter the password you want to use: "
-read -s PASS #Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
-cat > $PWD/dwc_network_server_emulator/adminpageconf.json <<EOF #Adds the recorded login information to a new file called "adminpageconf.json"
+read -s PASS # Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
+cat > $PWD/dwc_network_server_emulator/adminpageconf.json <<EOF
 {"username":"$USR","password":"$PASS"}
 EOF
 echo "Username and password changed!"
@@ -353,24 +377,24 @@ echo "You got it! Let's-a-go!"
 fi
 echo "Let me install a few upgrade and packages on your system for you...."
 echo "If you already have a package installed, I'll simply skip over it or upgrade it"
-apt-get update -y --fix-missing #Fixes missing apt-get repository errors on some Linux distributions
+apt-get update -y --fix-missing # Fixes missing apt-get repository errors on some Linux distributions
 echo "Updated repo lists...."
 read -p "Install package upgrades? This is not reccommended because it could break things. [y/n]?"
 if [ $REPLY != y ] ; then
 echo "Okay I won't upgrade your system."
 else
 echo "Installing package upgrades... go kill some time as this may take a few minutes..."
-apt-get upgrade -y #Upgrades all already installed packages on your system
+apt-get upgrade -y # Upgrades all already installed packages on your system
 echo "Upgrades complete!"
 fi
 clear
 echo "Now installing required packages..."
-apt-get install apache2 python2.7 python-twisted dnsmasq -y #Install required packages
+apt-get install apache2 python2.7 python-twisted dnsmasq -y # Install required packages
 echo "Installing Apache, Python 2.7, Python Twisted and DNSMasq....."
 clear
 echo "Now that that's out of the way, let's do some apache stuff"
 echo "Copying virtual hosts to sites-available for virtual hosting of the server"
-#The next several lines will copy the Nintendo virtual host files to sites-available in Apache's directory
+# The next several lines will copy the Nintendo virtual host files to sites-available in Apache's directory
 cp $vh/$vh1 $apache/$vh1
 cp $vh/$vh2 $apache/$vh2
 cp $vh/$vh3 $apache/$vh3
@@ -412,10 +436,10 @@ echo "Fixing that nagging Apache FQDN error...."
 cat >>/etc/apache2/apache2.conf <<EOF
 ServerName $fqdn
 EOF
-#That line is a little tricky to explain. Basically we're adding text to the end of the file that tells Apache the server name is localhost (your local machine).
-service apache2 restart #Restart Apache
-service apache2 reload #Reload Apache's config
-apachectl graceful #Another way to reload Apache because I'm paranoid
+# That line is a little tricky to explain. Basically we're adding text to the end of the file that tells Apache the server name is localhost (your local machine).
+service apache2 restart # Restart Apache
+service apache2 reload # Reload Apache's config
+apachectl graceful # Another way to reload Apache because I'm paranoid
 echo "If any errors occour, please look into this yourself"
 sleep 5s
 clear
@@ -428,7 +452,7 @@ echo "your LAN IP is"
 hostname  -I | cut -f1 -d' '
 echo "Please type in either your LAN or external IP"
 read -e IP
-cat >>/etc/dnsmasq.conf <<EOF #Adds your IP you provide to the end of the DNSMASQ config file
+cat >>/etc/dnsmasq.conf <<EOF # Adds your IP you provide to the end of the DNSMASQ config file
 address=/nintendowifi.net/$IP
 EOF
 clear
@@ -438,10 +462,10 @@ service dnsmasq restart
 echo "Now, let's set up the admin page login info...."
 sleep 3s
 echo "Please type your user name: "
-read -e USR #Waits for username
+read -e USR # Waits for username
 echo "Please enter the password you want to use: "
-read -s PASS #Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
-cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF #Adds the recorded login information to a new file called "adminpageconf.json"
+read -s PASS # Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
+cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF
 {"username":"$USR","password":"$PASS"}
 EOF
 echo "Username and password configured!"
@@ -451,6 +475,7 @@ echo "setup complete! quitting now...."
 }
 # End of functions
 root_check
+update
 init
 echo
 echo
