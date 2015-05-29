@@ -1,78 +1,6 @@
 #!/bin/bash
-### TODO ###
-# -work on updater to make it work properly
-##### UPDATER ###### # NOT FINISHED YET!
-
-#set -o nounset
-#set -o errexit
-
-#SELF=$(basename $0)
-
-# The base location from where to retrieve new versions of this script
-#UPDATE_BASE=http://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/
-
-# Update check
-#function updatecheck() {
-  #SUM_LATEST=$(curl $UPDATE_BASE/versions 2>&1 | grep $SELF | awk '{print $2}')
-  #SUM_SELF=$(tail --lines=+2 "$0" | md5sum | awk '{print $1}')
-  #if [[ "" == $SUM_LATEST ]]; then
-    #echo "No update information is available for '$SELF'" >&2
-
-  #elif [[ "$SUM_LATEST" != "$SUM_SELF" ]]; then
-    #echo "NOTE: New version available!" >&2
-	#runselfupdate
-  #fi
-#}
-
-# Self-update
-#function runselfupdate() {
-  #echo "Performing self-update..."
-
-  #_tempFileName="$0.tmp"
-  #_payloadName="$0.payload"
-
-  # Download new version
-  #echo -n "Downloading latest version..."
-  #if ! wget --quiet --output-document="$_payloadName" $UPDATE_BASE/$SELF ; then
-    #echo "Failed: Error while trying to wget new version!"
-    #echo "File requested: $UPDATE_BASE/$SELF"
-    #exit 1
-  #fi
-  #echo "Done."
-
-  # Restore shebang
-  #_interpreter=$(head --lines=1 "$0")
-  #echo $_interpreter > "$_tempFileName"
-  #tail --lines=+2 "$_payloadName" >> "$_tempFileName"
-  #rm "$_payloadName"
-
-  # Copy over modes from old version
-  #OCTAL_MODE=$(stat -c '%a' $SELF)
-  #if ! chmod $OCTAL_MODE "$_tempFileName" ; then
-    #echo "Failed: Error while trying to set mode on $_tempFileName."
-    #exit 1
-  #fi
-
-  # Spawn update script
-  #cat > updateScript.sh << EOF
-#!/bin/bash
-# Overwrite old file with new
-#if mv "$_tempFileName" "$0"; then
-  #echo "Done."
-  #echo "Update complete."
-  #rm -- \$0
-#else
-  #echo "Failed!"
-#fi
-#EOF
-
-  #echo -n "Inserting update process..."
-  #exec /bin/bash updateScript.sh
-#}
-
-
-##### END OF UPDATER #####
-
+# DWC Network Installer script by kyle95wm/beanjr
+# Version 2.1
 #Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 apache="/etc/apache2/sites-available" #This is the directory where sites are kept in case they need to be disabled in Apache
@@ -523,7 +451,6 @@ echo "setup complete! quitting now...."
 }
 # End of functions
 root_check
-#updatecheck
 init
 echo
 echo
