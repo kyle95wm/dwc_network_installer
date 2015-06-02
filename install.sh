@@ -1,6 +1,6 @@
 #!/bin/bash
 # DWC Network Installer script by kyle95wm/beanjr
-# Version 2.2
+# Version 2.3
 # Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 apache="/etc/apache2/sites-available" # This is the directory where sites are kept in case they need to be disabled in Apache
@@ -36,20 +36,17 @@ function update {
 # is not used.
 # Original code by Dennis Simpson
 # Modified by Kyle Warwick-Mathieu
-if [ "$1" != "-s" ]; then
-	echo "Checking if script is up to date, please wait"
-	wget -nv -O $UPDATE_FILE $UPDATE_URL >& /dev/null
-	diff $0 $UPDATE_FILE >& /dev/null
-	if [ "$?" != "0" -a -s $UPDATE_FILE ]; then
-		mv $UPDATE_FILE $0
-		chmod +x $0
-		echo "$0 updated"
-		$0 -s
-		exit
-	else
-		echo "No updates available"
-		rm $UPDATE_FILE
-	fi
+echo "Checking if script is up to date, please wait"
+wget -nv -O $UPDATE_FILE $UPDATE_URL >& /dev/null
+diff $0 $UPDATE_FILE >& /dev/null
+if [ "$?" != "0" -a -s $UPDATE_FILE ]; then
+	mv $UPDATE_FILE $0
+	chmod +x $0
+	echo "$0 updated"
+	$0 -s
+	exit
+else
+	rm $UPDATE_FILE
 fi
 }
 function init {
@@ -475,7 +472,9 @@ echo "setup complete! quitting now...."
 }
 # End of functions
 root_check
-update
+if [ "$1" != "-s" ]; then
+	update
+fi
 init
 echo
 echo
