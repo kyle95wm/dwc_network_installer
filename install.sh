@@ -1,6 +1,6 @@
 #!/bin/bash
 # DWC Network Installer script by kyle95wm/beanjr
-# Version 2.3
+# Version 2.4
 # Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 apache="/etc/apache2/sites-available" # This is the directory where sites are kept in case they need to be disabled in Apache
@@ -113,6 +113,7 @@ clear
 echo "Please pick from the list of git clones to use"
 echo "1) Polaris [OFFICIAL REPO]"
 echo "2) kyle95wm/mrbean35000vrjr"
+echo "3) DWC LITE - by kyle95wm - This version has no ban system or admin page. This version is useful for LAN parties where everyone is trusted. There is an option to add IP addresses to a 'kick' table if you wish."
 }
 function git_check {
 if [ $serverclone == 1 ] ; then
@@ -122,6 +123,10 @@ git clone http://github.com/polaris-/dwc_network_server_emulator
 elif [ $serverclone == 2 ] ; then
 echo "Cloning BeanJr's repository...."
 git clone http://github.com/kyle95wm/dwc_network_server_emulator
+elif [ $serverclone == 3 ] ; then
+echo "Cloning DWC LITE....."
+git clone https://github.com/kyle95wm/dwc_network_server_emulator_lite
+mv $PWD/dwc_network_server_emulator_lite/ $PWD/dwc_network_server_emulator/
 else
 echo "$serverclone is not a valid entry! You must type a number from the list."
 echo "You will not be able to proceed without the git clone!"
