@@ -13,8 +13,6 @@ These scripts run a series of commands to assist you in installing and uninstall
 
 You MUST be running an opperating system that supports APT-GET as a package manager. For example, Raspbian (the native Debian for Raspberry Pi_ and Ubuntu support APT right out of the box
 
-There are two versions of this script available: an English version and a French translation (credits to Dr. Wily)
-
 
 # If you are having problems or have recommendations on improving either one of these scripts, let me know in the issues section
 
@@ -25,14 +23,3 @@ You can skip the auto-update process by using the -s switch
 for example
 
     sudo ./install.sh -s
-or
-
-
-
-
-
-
-    sudo ./install-fr.sh -s
-
-
-for the English and French versions respectivly.
