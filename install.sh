@@ -1,6 +1,6 @@
 #!/bin/bash
 # DWC Network Installer script by kyle95wm/beanjr
-# Version 2.4
+# Version 2.5
 # Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 apache="/etc/apache2/sites-available" # This is the directory where sites are kept in case they need to be disabled in Apache
@@ -234,6 +234,8 @@ clear
 service dnsmasq restart
 echo "Now, let's set up the admin page login info...."
 sleep 3s
+read -p "Would you like to set up an admin page login? This can be done later by re-running the script. [y/n]: " admin
+if [ $admin == y ] ; then
 echo "Please type your user name: "
 read -e USR # Waits for username
 echo "Please enter the password you want to use: "
@@ -243,6 +245,9 @@ cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF #Adds the recorded 
 EOF
 echo "Username and password configured!"
 echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
+else
+echo "Okay!"
+fi
 clear
 echo "Everything should be set up now"
 echo "I will now quit...."
@@ -463,6 +468,8 @@ clear
 service dnsmasq restart
 echo "Now, let's set up the admin page login info...."
 sleep 3s
+read -p "Would you like to set up an admin page login? This can be done later by re-running the script. [y/n]: " admin
+if [ $admin == y ] ; then
 echo "Please type your user name: "
 read -e USR # Waits for username
 echo "Please enter the password you want to use: "
@@ -473,6 +480,9 @@ EOF
 echo "Username and password configured!"
 echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
 clear
+else
+echo "Okay!"
+fi
 echo "setup complete! quitting now...."
 }
 # End of functions
