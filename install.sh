@@ -1,6 +1,5 @@
 #!/bin/bash
 # DWC Network Installer script by kyle95wm/beanjr
-# Version 2.5
 # Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 apache="/etc/apache2/sites-available" # This is the directory where sites are kept in case they need to be disabled in Apache
@@ -20,6 +19,8 @@ mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
 UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
 UPDATE_FILE="$0.tmp"
+ip=$(hostname -I) # This new variable will make it easy for a user to input their LAN IP into DNSMASQ without typing it
+ver="2.5.1" # This lets the user know what version of the script they are running
 # Script Functions
 
 function root_check {
@@ -486,6 +487,10 @@ fi
 echo "setup complete! quitting now...."
 }
 # End of functions
+if [ "$1" == "-ver" ] ; then
+echo "You are currently running version $ver of the script."
+exit 0
+fi
 root_check
 if [ "$1" != "-s" ]; then
 	update
