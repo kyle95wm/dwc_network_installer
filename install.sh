@@ -29,6 +29,7 @@ if [ "$UID" -ne "$ROOT_UID" ] ; then # if the user ID is not root...
 echo "You must be root to run this script!" # Tell the user they must be root
 echo "There are some things in this script that require root access (i.e packages, copying files to directories owned by root, etc)"
 echo "Please type 'sudo $0' to run the script as root."
+echo "Or, if you're using a Linux distro without sudo, login as root."
 exit 1 # Exits with an error
 fi # End of if statement
 }
@@ -53,7 +54,7 @@ fi
 function init {
 ls |grep install.sh
 if [ $? != "0" ] ; then
-echo "Busted! Please run this script in the current directory where it is located."
+echo "Please run this script in the current directory where it is located."
 exit 1
 else
 echo "Script confirmed present"
@@ -66,7 +67,7 @@ echo "apt-get detected"
 else
 echo "apt not detected. This means your OS is not supported by this script."
 echo "Please consider running Ubuntu or Raspbian or any other Debian distro"
-echo "that supports apt-get as the package manager."
+echo "that supports apt-get."
 exit 1
 fi
 echo "Checking for github package....."
@@ -95,7 +96,7 @@ echo "========MENU========"
 echo "1) Install the server [only run once!]"
 echo "2) Change admin page username/password"
 echo "3) Exit"
-echo "4) Full Uninstall - deletes everything"
+echo "4) Full Uninstall - deletes everything except the packages."
 echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
 echo "disable the modules that were enabled"
 echo "6) Partial Install - sets up apache and dnsmasq assuming they're already installed"
@@ -113,7 +114,7 @@ function menu_git {
 clear
 echo "Please pick from the list of git clones to use"
 echo "1) Polaris [OFFICIAL REPO]"
-echo "2) kyle95wm/mrbean35000vrjr"
+echo "2) kyle95wm/BeanJr"
 echo "3) DWC LITE - by kyle95wm - This version has no ban system or admin page. This version is useful for LAN parties where everyone is trusted. There is an option to add IP addresses to a 'kick' table if you wish."
 }
 function git_check {
@@ -129,7 +130,7 @@ echo "Cloning DWC LITE....."
 git clone https://github.com/kyle95wm/dwc_network_server_emulator_lite
 mv $PWD/dwc_network_server_emulator_lite/ $PWD/dwc_network_server_emulator/
 else
-echo "$serverclone is not a valid entry! You must type a number from the list."
+echo "$serverclone is not a valid entry! You must type a number (1-3) from the list."
 echo "You will not be able to proceed without the git clone!"
 echo "Please re-run this script and try again."
 echo "Exiting...."
@@ -215,10 +216,10 @@ service apache2 restart # Restart Apache
 service apache2 reload # Reload Apache's config
 apachectl graceful # Another way to reload Apache because I'm paranoid
 echo "If any errors occour, please look into this yourself"
-sleep 5s
+sleep 2s
 clear
 echo "----------Lets configure DNSMASQ now----------"
-sleep 3s
+sleep 2s
 echo "What is your EXTERNAL IP?"
 echo "NOTE: If you plan on using this on a LAN, put the IP of your Linux system instead"
 echo "It's also best practice to make this address static in your /etc/network/interfaces file"
@@ -252,11 +253,12 @@ fi
 clear
 echo "Everything should be set up now"
 echo "I will now quit...."
+echo "Thank you for using this script."
 exit 0
 }
 
 function admin_page_credentials {
-echo "Please type your user name: "
+echo "Please type your user name you would like to use: "
 read -e USR # Waits for username
 echo "Please enter the password you want to use: "
 read -s PASS # Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
@@ -264,7 +266,7 @@ cat > $PWD/dwc_network_server_emulator/adminpageconf.json <<EOF
 {"username":"$USR","password":"$PASS"}
 EOF
 echo "Username and password changed!"
-echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
+echo "NOTE: To get to the admin page go to <IP/Domain of server>:9009/"
 }
 
 function full_uninstall {
@@ -319,12 +321,8 @@ echo "Okay we broke it again.... dont worry about it"
 else
 echo "Mods diabled $mod1 $mod2"
 fi
-echo "Uninstalling packages now"
-apt-get remove apache2 python-twisted dnsmasq git -y --purge
-echo "Packages removed...."
-echo "Now let's remove some left-over packages"
-apt-get autoremove -y --purge
-echo "done!"
+echo "AltWFC installed apache2, python-twisted, dnsmasq and git. If you do not want these, run sudo apt-get remove apache2 python-twisted dnsmasq git"
+echo "This is just in case you use these programs."
 sleep 4s
 clear
 echo "Deleting dwc_network_server_emulator git clone....."
@@ -536,5 +534,5 @@ echo "sudo chown username:group dwc_network_server_emulator/ -R"
 echo "Replace 'username' and 'group' with your environment."
 echo "If you don't know what your username is type 'who' or 'id'"
 echo "If you don't know what group you are a part of, it is most likely your username."
-echo "Thank you for using my script and have a nice day!"
+echo "Thank you for using this script and have a nice day!"
 exit 0
