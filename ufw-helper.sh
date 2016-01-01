@@ -2,7 +2,7 @@
 
 # This script is designed to help you activate UFW and open all the appropriate ports
 # for your server.
-if [ $USERID != 0 ] ; then
+if [ 'id -u' -ne 0 ] ; then
 	You must be root!
 fi
 if [ "$1" == "install" ] ; then
