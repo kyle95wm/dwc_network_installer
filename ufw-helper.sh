@@ -29,7 +29,7 @@ if [ "$1" == "install" ] ; then
 	fi
 	ufw allow 27500/tcp
 	ufw allow 27900/tcp
-	ufw alllow 27901/tcp
+	ufw alllow 27901/tcp # Why does this error out?
 	ufw allow 28910/tcp
 	ufw allow 29900/tcp
 	ufw allow 29901/tcp
@@ -43,7 +43,7 @@ elif [ "$1" == "uninstall" ] ; then
 	ufw delete allow 9998
 	ufw delete allow 27500/tcp
 	ufw delete allow 27900/tcp
-	ufw alllow 27901/tcp
+	ufw alllow 27901/tcp # Why does this error out?
 	ufw delete allow 28910/tcp
 	ufw delete allow 29900/tcp
 	ufw delete allow 29901/tcp
