@@ -29,8 +29,8 @@ if [ "$1" == "install" ] ; then
 	echo "Rules added"
 	ufw enable
 elif [ "$1" == "uninstall" ] ; then
-	ufw delete allow 8000,9000,9001,9002,9009,53,27500,27900,27901,28910,29900,29901,29920/tcp
-	ufw delete allow 8000,9000,9001,9002,9009,53,27500,27900,27901,28910,29900,29901,29920/udp
+	ufw delete allow 8000,9000,9001,9002,9009,53,27500,27900,27901,28910,29900,29901,29920,9998/tcp
+	ufw delete allow 8000,9000,9001,9002,9009,53,27500,27900,27901,28910,29900,29901,29920,9998/udp
 	echo "ALTWFC Rules deleted. Now disabling firewall (you can re-enable if you want)"
 	ufw disable
 else
