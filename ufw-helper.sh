@@ -27,9 +27,10 @@ if [ "$1" == "install" ] ; then
 	if [ $reg == y ] ; then
 		ufw allow 9998
 	fi
+	ufw allow 53/tcp
 	ufw allow 27500/tcp
 	ufw allow 27900/tcp
-	ufw allow 27901/tcp # Why does this error out?
+	ufw allow 27901/tcp
 	ufw allow 28910/tcp
 	ufw allow 29900/tcp
 	ufw allow 29901/tcp
@@ -37,13 +38,14 @@ if [ "$1" == "install" ] ; then
 	echo "Rules added"
 	ufw enable
 elif [ "$1" == "uninstall" ] ; then
+	ufw delete allow 53/tcp
 	ufw delete allow 8000/tcp
 	ufw delete allow 9000:9002/tcp
 	ufw delete allow 9009/tcp
 	ufw delete allow 9998
 	ufw delete allow 27500/tcp
 	ufw delete allow 27900/tcp
-	ufw delete allow 27901/tcp # Why does this error out?
+	ufw delete allow 27901/tcp
 	ufw delete allow 28910/tcp
 	ufw delete allow 29900/tcp
 	ufw delete allow 29901/tcp
