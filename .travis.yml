@@ -1,1 +1,8 @@
+sudo: true
+language: bash
 
+before_script:
+    - curl -L "https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
+
+script:
+    - bash install.sh
