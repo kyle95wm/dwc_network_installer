@@ -1,7 +1,75 @@
 #!/bin/bash
 
 # This beta script should be used only to generate custom domains after the main install script exits.
+if [ "$1" == "--test-build" ] ; then
+####
+echo "Creating custom virtual hosts...."
+touch /etc/apache2/sites-available/gamestats2.gs.test.local.conf
+touch /etc/apache2/sites-available/gamestats.gs.test.local.conf
+touch /etc/apache2/sites-available/nas-naswii-dls1-conntest.test.local.conf
+touch /etc/apache2/sites-available/sake.gs.test.local.conf
+cat >/etc/apache2/sites-available/gamestats2.gs.test.local.conf <<EOF
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        ServerName gamestats2.gs.test.local
+        ServerAlias "gamestats2.gs.test.local, gamestats2.gs.test.local"
+ 
+        ProxyPreserveHost On
+ 
+        ProxyPass / http://127.0.0.1:9002/
+        ProxyPassReverse / http://127.0.0.1:9002/
+</VirtualHost>
+EOF
 
+cat >/etc/apache2/sites-available/gamestats.gs.test.local.conf <<EOF
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        ServerName gamestats.gs.test.local
+        ServerAlias "gamestats.gs.test.local, gamestats.gs.test.local"
+        ProxyPreserveHost On
+        ProxyPass / http://127.0.0.1:9002/
+        ProxyPassReverse / http://127.0.0.1:9002/
+</VirtualHost>
+EOF
+
+cat >/etc/apache2/sites-available/nas-naswii-dls1-conntest.test.local.conf <<EOF
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        ServerName naswii.test.local
+        ServerAlias "naswii.$domain, naswii.test.local"
+        ServerAlias "nas.test.local"
+        ServerAlias "nas.test.local, nas.test.local"
+        ServerAlias "dls1.test.local"
+        ServerAlias "dls1.test.local, dls1.test.local"
+        ServerAlias "conntest.test.local"
+        ServerAlias "conntest.test.local, conntest.test.local"
+        ProxyPreserveHost On
+        ProxyPass / http://127.0.0.1:9000/
+        ProxyPassReverse / http://127.0.0.1:9000/
+</VirtualHost>
+EOF
+
+cat >/etc/apache2/sites-available/sake.gs.test.local.conf <<EOF
+<VirtualHost *:80>
+        ServerAdmin webmaster@localhost
+        ServerName sake.gs.test.local
+        ServerAlias sake.gs.test.local *.sake.gs.test.local
+        ServerAlias secure.sake.gs.test.local
+        ServerAlias secure.sake.gs.test.local *.secure.sake.gs.test.local
+ 
+        ProxyPass / http://127.0.0.1:8000/
+ 
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+echo "Done!"
+echo "enabling...."
+a2ensite *.test.local.conf
+apachectl graceful
+exit
+####
+fi
 if [ $UID != 0 ] ; then
 	echo "Please run this script as root"
 	exit 1

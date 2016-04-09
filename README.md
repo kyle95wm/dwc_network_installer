@@ -1,4 +1,4 @@
-# dwc_network_installer
+# dwc_network_installer [![Build Status](https://travis-ci.org/kyle95wm/dwc_network_installer.svg?branch=master)](https://travis-ci.org/kyle95wm/dwc_network_installer)
 
 Want to set up your own DWC network server without doing all kinds of command line work?
 

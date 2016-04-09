@@ -3,6 +3,7 @@ language: bash
 
 before_script:
     - curl -L "https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
-
+    - curl -L "https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/custom-dom-gen.sh"
 script:
-    - bash install.sh
+    - sudo bash install.sh --test-build
+    - sudo bash custom-dom-gen.sh --test-build

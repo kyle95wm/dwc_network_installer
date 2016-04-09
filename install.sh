@@ -484,10 +484,41 @@ echo "Okay!"
 fi
 echo "setup complete! quitting now...."
 }
+function test {
+apt-get update
+apt-get install git -y
+git clone http://github.com/polaris-/dwc_network_server_emulator
+apt-get update -y --fix-missing
+apt-get install apache2 python2.7 python-twisted dnsmasq -y
+cp $vh/$vh1 $apache/$vh1
+cp $vh/$vh2 $apache/$vh2
+cp $vh/$vh3 $apache/$vh3
+cp $vh/$vh4 $apache/$vh4
+a2ensite $vh1 $vh2 $vh3 $vh4
+a2enmod $mod1 $mod2
+service apache2 restart
+service apache2 reload
+apachectl graceful
+cat >>/etc/apache2/apache2.conf <<EOF
+ServerName localhost
+EOF
+service apache2 restart
+cat >>/etc/dnsmasq.conf <<EOF
+address=/nintendowifi.net/127.0.0.1
+EOF
+cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF
+{"username":"admin","password":"admin"}
+EOF
+exit
+}
 # End of functions
 if [ "$1" == "-ver" ] ; then
 echo "You are currently running version $ver of the script."
 exit 0
+fi
+if [ "$1" == "--test-build" ] ; then
+        test
+        exit 0
 fi
 root_check
 if [ "$1" != "-s" ]; then
