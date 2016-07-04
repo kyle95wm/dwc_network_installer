@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo "NOTE: You will need to insert your new domain into /etc/dnsmasq.conf for it to work."
 # This beta script should be used only to generate custom domains after the main install script exits.
 if [ "$1" == "--test-build" ] ; then
 ####
@@ -67,6 +67,10 @@ echo "Done!"
 echo "enabling...."
 a2ensite *.test.local.conf
 apachectl graceful
+echo "Adding DNS record to DNSMASQ config - THIS WILL ONLY BE DONE ON THE TEST BUILD!"
+cat >>/etc/dnsmasq.conf <<EOF
+address=/test.local/$(curl -s icanhazip.com)
+EOF
 echo "Checking DNS records...."
 dig @localhost gamestats.gs.test.local
 dig @localhost gamestats2.gs.test.local

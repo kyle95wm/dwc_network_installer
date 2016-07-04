@@ -19,8 +19,8 @@ mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
 UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
 UPDATE_FILE="$0.tmp"
-ip=$(hostname -I) # This new variable will make it easy for a user to input their LAN IP into DNSMASQ without typing it
-ver="2.5.1" # This lets the user know what version of the script they are running
+ip=$(curl -s icanhazip.com) # This variable shows the user's external IP
+ver="2.5.2" # This lets the user know what version of the script they are running
 # Script Functions
 
 function root_check {
@@ -225,6 +225,7 @@ echo "NOTE: If you plan on using this on a LAN, put the IP of your Linux system 
 echo "It's also best practice to make this address static in your /etc/network/interfaces file"
 echo "your LAN IP is"
 hostname  -I | cut -f1 -d' '
+echo "Your external IP is $IP"
 echo "Please type in either your LAN or external IP"
 read -e IP
 cat >>/etc/dnsmasq.conf <<EOF
@@ -456,6 +457,7 @@ echo "NOTE: If you plan on using this on a LAN, put the IP of your Linux system 
 echo "It's also best practice to make this address static in your /etc/network/interfaces file"
 echo "your LAN IP is"
 hostname  -I | cut -f1 -d' '
+echo "Your external IP is $IP"
 echo "Please type in either your LAN or external IP"
 read -e IP
 cat >>/etc/dnsmasq.conf <<EOF # Adds your IP you provide to the end of the DNSMASQ config file
