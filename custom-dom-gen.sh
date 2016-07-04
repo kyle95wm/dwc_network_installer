@@ -71,6 +71,7 @@ echo "Adding DNS record to DNSMASQ config - THIS WILL ONLY BE DONE ON THE TEST B
 cat >>/etc/dnsmasq.conf <<EOF
 address=/test.local/$(curl -s icanhazip.com)
 EOF
+service dnsmasq restart
 echo "Checking DNS records...."
 dig @localhost gamestats.gs.test.local
 dig @localhost gamestats2.gs.test.local
