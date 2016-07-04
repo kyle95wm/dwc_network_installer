@@ -67,6 +67,12 @@ echo "Done!"
 echo "enabling...."
 a2ensite *.test.local.conf
 apachectl graceful
+echo "Checking DNS records...."
+dig @localhost gamestats.gs.test.local
+dig @localhost gamestats2.gs.test.local
+dig @localhost nas-naswii-dls1-conntest.test.local
+dig @localhost sake.gs.test.local
+echo "DNS tests done!"
 exit
 ####
 fi
