@@ -509,6 +509,11 @@ EOF
 cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF
 {"username":"admin","password":"admin"}
 EOF
+if [ $? == "0" ] ; then
+	echo "Build complete!"
+else
+	echo "BUILD FAILED!"
+fi
 exit
 }
 # End of functions
