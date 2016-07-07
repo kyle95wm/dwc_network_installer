@@ -1,5 +1,6 @@
 #!/bin/bash
 # DWC Network Installer script by kyle95wm/beanjr
+#NOTE TO DEVELOPERS: please remember to edit the test build section of this script if you have made any changes.
 # Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 apache="/etc/apache2/sites-available" # This is the directory where sites are kept in case they need to be disabled in Apache
