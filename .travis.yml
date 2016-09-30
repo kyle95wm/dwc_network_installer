@@ -4,8 +4,6 @@ language: bash
 before_script:
     - curl -L "https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
     - curl -L "https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/custom-dom-gen.sh"
-    - curl -L "https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/server-test.sh"
 script:
     - sudo bash install.sh --test-build
     - sudo bash custom-dom-gen.sh --test-build
-    - sudo bash server-test.sh
