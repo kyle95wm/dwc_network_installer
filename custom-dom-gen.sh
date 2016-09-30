@@ -66,7 +66,7 @@ EOF
 echo "Done!"
 echo "enabling...."
 a2ensite *.test.local.conf
-apachectl graceful
+service apache2 restart
 echo "Adding DNS record to DNSMASQ config - THIS WILL ONLY BE DONE ON THE TEST BUILD!"
 cat >>/etc/dnsmasq.conf <<EOF
 address=/test.local/$(curl -s icanhazip.com)
@@ -78,6 +78,12 @@ dig @localhost gamestats2.gs.test.local
 dig @localhost nas-naswii-dls1-conntest.test.local
 dig @localhost sake.gs.test.local
 echo "DNS tests done!"
+echo "################### SHOW DNSMASQ CONFIG ####################3"
+cat /etc/dnsmasq.conf |grep "test.local"
+if [ $? != "0" ] ; then
+exit 1
+else
+echo "################# END OF DNSMASQ CONFIG #####################"
 exit
 ####
 fi
@@ -167,3 +173,4 @@ echo "Done!"
 echo "enabling...."
 a2ensite *.$domain.conf
 apachectl graceful
+fi

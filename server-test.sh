@@ -22,72 +22,72 @@ else
 	# Sleep for 20 seconds
 	sleep 20
 	# Test if conntest works
-	curl conntest.nintendowifi.net
+	wget -p conntest.nintendowifi.net
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
-	curl naswii.nintendowifi.net
+	wget -p naswii.nintendowifi.net
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
-	curl nas.nintendowifi.net
+	wget -p nas.nintendowifi.net
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
-	curl dls1.nintendowifi.net
+	wget -p dls1.nintendowifi.net
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
 	# Now test it with the test domain
-	curl conntest.test.local
+	wget -p conntest.test.local
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
-	curl naswii.test.local
+	wget -p naswii.test.local
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
-	curl nas.test.local
+	wget -p nas.test.local
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
-	curl dls1.test.local
+	wget -p dls1.test.local
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
 	# Test if gamestats works
-	curl gamestats.gs.nintendowifi.net
+	wget -p gamestats.gs.nintendowifi.net
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
-	curl gamestats2.gs.nintendowifi.net
+	wget -p gamestats2.gs.nintendowifi.net
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
 	# Now test it with the test domain
-	curl gamestats.gs.test.local
+	wget -p gamestats.gs.test.local
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
-	curl gamestats2.gs.test.local
+	wget -p gamestats2.gs.test.local
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
 	# Test the sake server
-	curl sake.gs.nintendowifi.net
+	wget -p sake.gs.nintendowifi.net
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
-	curl secure.sake.gs.nintendowifi.net
+	wget -p secure.sake.gs.nintendowifi.net
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
 	# Now test it with the test domain
-	curl sake.gs.test.local
+	wget -p sake.gs.test.local
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
-	curl secure.sake.gs.tes.local
+	wget -p secure.sake.gs.tes.local
 	if [ $? != "0" ] ; then
 		echo "FAIL"
 	fi
