@@ -488,27 +488,30 @@ fi
 echo "setup complete! quitting now...."
 }
 function test {
-apt-get update >/dev/null
-apt-get install git -y >/dev/null
-git clone http://github.com/kyle95wm/dwc_network_server_emulator >/dev/null
-apt-get update -y --fix-missing >/dev/null
-apt-get install apache2 python2.7 python-twisted dnsmasq -y >/dev/null
-cp $vh/$vh1 $apache/$vh1 >/dev/null
-cp $vh/$vh2 $apache/$vh2 >/dev/null
-cp $vh/$vh3 $apache/$vh3 >/dev/null
-cp $vh/$vh4 $apache/$vh4 >/dev/null
-a2ensite $vh1 $vh2 $vh3 $vh4 >/dev/null
-a2enmod $mod1 $mod2 >/dev/null
-service apache2 restart >/dev/null
-service apache2 reload >/dev/null
-apachectl graceful >/dev/null
+apt-get update
+apt-get install git -y
+git clone http://github.com/kyle95wm/dwc_network_server_emulator
+apt-get update -y --fix-missing
+apt-get install apache2 python2.7 python-twisted dnsmasq -y
+cp $vh/$vh1 $apache/$vh1
+cp $vh/$vh2 $apache/$vh2
+cp $vh/$vh3 $apache/$vh3
+cp $vh/$vh4 $apache/$vh4
+a2ensite $vh1 $vh2 $vh3 $vh4
+a2enmod $mod1 $mod2
+service apache2 restart
+service apache2 reload
+apachectl graceful
 cat >>/etc/apache2/apache2.conf <<EOF
 ServerName localhost
 EOF
 service apache2 restart >/dev/null
 cat >>/etc/dnsmasq.conf <<EOF
-address=/nintendowifi.net/127.0.0.1
+address=/nintendowifi.net/$ip
 EOF
+echo "################### SHOW DNSMASQ CONFIG ####################3"
+cat /etc/dnsmasq.conf
+echo "################# END OF DNSMASQ CONFIG #####################"
 cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF
 {"username":"admin","password":"admin"}
 EOF
