@@ -490,7 +490,7 @@ echo "setup complete! quitting now...."
 function test {
 apt-get update >/dev/null
 apt-get install git -y >/dev/null
-git clone http://github.com/polaris-/dwc_network_server_emulator >/dev/null
+git clone http://github.com/kyle95wm/dwc_network_server_emulator >/dev/null
 apt-get update -y --fix-missing >/dev/null
 apt-get install apache2 python2.7 python-twisted dnsmasq -y >/dev/null
 cp $vh/$vh1 $apache/$vh1 >/dev/null
