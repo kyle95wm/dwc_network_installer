@@ -20,8 +20,7 @@ mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
 UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
 UPDATE_FILE="$0.tmp"
-ip=$(curl -s icanhazip.com) # This variable shows the user's external IP
-ver="2.5.2" # This lets the user know what version of the script they are running
+ver="2.5.3" # This lets the user know what version of the script they are running
 # Script Functions
 
 function root_check {
@@ -72,6 +71,7 @@ echo "that supports apt-get."
 exit 1
 fi
 echo "Checking for github package....."
+apt-get update --fix-missing
 dpkg -L git >/dev/null
 if [ $? != "0" ] ; then
 echo "Installing git....."
@@ -142,6 +142,7 @@ echo "<<<<<<<<PROBLEM CLONING GIT>>>>>>>>"
 echo "This may be caused by the github package not being properly installed."
 echo "Please consider re-installing the package manually by typing:"
 echo "apt-get remove git --purge"
+echo "apt-get update --fix-missing
 echo "apt-get install git"
 echo "And then try running the script again."
 echo "Exiting now...."
@@ -458,7 +459,8 @@ echo "NOTE: If you plan on using this on a LAN, put the IP of your Linux system 
 echo "It's also best practice to make this address static in your /etc/network/interfaces file"
 echo "your LAN IP is"
 hostname  -I | cut -f1 -d' '
-echo "Your external IP is $IP"
+echo "Your external IP is:"
+curl -s icanhazip.com
 echo "Please type in either your LAN or external IP"
 read -e IP
 cat >>/etc/dnsmasq.conf <<EOF # Adds your IP you provide to the end of the DNSMASQ config file
@@ -488,7 +490,7 @@ fi
 echo "setup complete! quitting now...."
 }
 function test {
-apt-get update
+apt-get update --fix-missing
 apt-get install git -y
 git clone http://github.com/kyle95wm/dwc_network_server_emulator
 apt-get update -y --fix-missing
