@@ -142,7 +142,7 @@ echo "<<<<<<<<PROBLEM CLONING GIT>>>>>>>>"
 echo "This may be caused by the github package not being properly installed."
 echo "Please consider re-installing the package manually by typing:"
 echo "apt-get remove git --purge"
-echo "apt-get update --fix-missing
+echo "apt-get update --fix-missing"
 echo "apt-get install git"
 echo "And then try running the script again."
 echo "Exiting now...."
