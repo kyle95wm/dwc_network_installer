@@ -21,7 +21,7 @@ mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
 UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
 UPDATE_FILE="$0.tmp"
-ver="2.5.3" # This lets the user know what version of the script they are running
+ver="2.5.4" # This lets the user know what version of the script they are running
 # Script Functions
 
 function root_check {
@@ -217,13 +217,15 @@ fi
 #a fix to fix issue: polaris-/dwc_network_server_emulator#413
 read -p "Do you want to add 'HttpProtocolOptions Unsafe LenientMethods Allow0.9' to apache2.conf this fixes when you have error codes like: 23400 on games [y/n] "
 if [ $REPLY == "y" ] ; then
-echo "Okay I won't attempt to fix the error"
-echo "If for whatever reason you need to in the future type the following in to your /etc/apache2/apache2.conf:"
-echo "HttpProtocolOptions Unsafe LenientMethods Allow0.9"
-else
+echo "Fixing it! adding: HttpProtocolOptions Unsafe LenientMethods Allow0.9"
+echo "to your apache2.conf!"
 cat >>/etc/apache2/apache2.conf <<EOF
 HttpProtocolOptions Unsafe LenientMethods Allow0.9
 EOF
+else
+echo "Okay I won't attempt to fix the error"
+echo "If for whatever reason you need to in the future type the following in to your /etc/apache2/apache2.conf:"
+echo "HttpProtocolOptions Unsafe LenientMethods Allow0.9"
 fi
 # That line is a little tricky to explain. Basically we're adding text to the end of the file that tells Apache the server name is localhost (your local machine).
 service apache2 restart # Restart Apache
@@ -457,19 +459,19 @@ echo "Fixing that nagging Apache FQDN error...."
 cat >>/etc/apache2/apache2.conf <<EOF
 ServerName $fqdn
 EOF
-
 #a fix to fix issue: polaris-/dwc_network_server_emulator#413
 read -p "Do you want to add 'HttpProtocolOptions Unsafe LenientMethods Allow0.9' to apache2.conf this fixes when you have error codes like: 23400 on games [y/n] "
 if [ $REPLY == "y" ] ; then
-echo "Okay I won't attempt to fix the error"
-echo "If for whatever reason you need to in the future type the following in to your /etc/apache2/apache2.conf:"
-echo "HttpProtocolOptions Unsafe LenientMethods Allow0.9"
-else
+echo "Fixing it! adding: HttpProtocolOptions Unsafe LenientMethods Allow0.9"
+echo "to your apache2.conf!"
 cat >>/etc/apache2/apache2.conf <<EOF
 HttpProtocolOptions Unsafe LenientMethods Allow0.9
 EOF
+else
+echo "Okay I won't attempt to fix the error"
+echo "If for whatever reason you need to in the future type the following in to your /etc/apache2/apache2.conf:"
+echo "HttpProtocolOptions Unsafe LenientMethods Allow0.9"
 fi
-
 # That line is a little tricky to explain. Basically we're adding text to the end of the file that tells Apache the server name is localhost (your local machine).
 service apache2 restart # Restart Apache
 service apache2 reload # Reload Apache's config
