@@ -21,7 +21,7 @@ mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
 UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
 UPDATE_FILE="$0.tmp"
-ver="2.5.3" # This lets the user know what version of the script they are running
+ver="2.5.4" # This lets the user know what version of the script they are running
 # Script Functions
 
 function root_check {
