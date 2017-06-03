@@ -19,7 +19,7 @@ vh8="sake.gs.nintendowifi.net" # Fallback for vh4
 mod1="proxy" # This is a proxy mod that is dependent on the other 2
 mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
-UPDATE_URL="https://raw.githubusercontent.com/Marfjeh/dwc_network_installer/test/install.sh"
+UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
 UPDATE_FILE="$0.tmp"
 ver="2.5.3" # This lets the user know what version of the script they are running
 # Script Functions
