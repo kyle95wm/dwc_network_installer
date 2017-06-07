@@ -566,7 +566,7 @@ crontab -l -u $USER |grep "@reboot sh /start-altwfc.sh >/cron-logs/cronlog 2>&1"
 if [ $? != "0" ] ; then
 	echo "No cron job is currently installed"
 	echo "Working the magic. Hang tight!"
-cat > /start-alwtfc.sh <<EOF
+cat > /start-altwtfc.sh <<EOF
 #!/bin/sh
 cd /
 cd $PWD/dwc_network_server_emulator
@@ -590,7 +590,7 @@ else
 		exit
 	else
 		echo "Deleting...."
-		rm -rf /start-alwtfc.sh
+		rm -rf /start-altwtfc.sh
 		rm -rf /cron-logs
 		echo "THIS NEXT PART IS NOT REVERSABLE!!!"
 		crontab -u root -r -i
