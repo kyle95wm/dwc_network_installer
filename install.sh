@@ -1,6 +1,6 @@
 #!/bin/bash
 # DWC Network Installer script by kyle95wm/beanjr
-#NOTE TO DEVELOPERS: please remember to edit the test build section of this script if you have made any changes.
+# NOTE TO DEVELOPERS: please remember to edit the test build section of this script if you have made any changes.
 # Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 ip=$(curl -s icanhazip.com) # This variable shows the user's external IP
@@ -21,7 +21,7 @@ mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
 UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
 UPDATE_FILE="$0.tmp"
-ver="2.5.4" # This lets the user know what version of the script they are running
+ver="2.5.6" # This lets the user know what version of the script they are running
 # Script Functions
 
 function root_check {
@@ -559,6 +559,44 @@ fi
 if [ "$1" == "--test-build" ] ; then
         test
 	exit
+elif [ "$1" == "--test-new-apache" ] ; then
+# This tests the new apache fix
+apt-get update --fix-missing
+apt-get install git -y
+git clone http://github.com/kyle95wm/dwc_network_server_emulator
+apt-get update -y --fix-missing
+apt-get install apache2 python2.7 python-twisted dnsmasq -y
+cp $vh/$vh1 $apache/$vh1
+cp $vh/$vh2 $apache/$vh2
+cp $vh/$vh3 $apache/$vh3
+cp $vh/$vh4 $apache/$vh4
+a2ensite $vh1 $vh2 $vh3 $vh4
+a2enmod $mod1 $mod2
+service apache2 restart
+service apache2 reload
+apachectl graceful
+cat >>/etc/apache2/apache2.conf <<EOF
+ServerName localhost
+EOF
+cat >>/etc/apache2/apache2.conf <<EOF
+HttpProtocolOptions Unsafe LenientMethods Allow0.9
+EOF
+service apache2 restart >/dev/null
+cat >>/etc/dnsmasq.conf <<EOF
+address=/nintendowifi.net/$ip
+EOF
+echo "################### SHOW DNSMASQ CONFIG ####################3"
+cat /etc/dnsmasq.conf
+echo "################# END OF DNSMASQ CONFIG #####################"
+cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF
+{"username":"admin","password":"admin"}
+EOF
+if [ $? == "0" ] ; then
+	echo "Build complete!"
+else
+	echo "BUILD FAILED!"
+fi
+exit
 elif [ "$1" == "--cron" ] ; then
 # This is a work-in-progress. This will allow the user to add a cron script to auto-start master_server on boot.
 echo "Checking if there is a cron available for $USER"
