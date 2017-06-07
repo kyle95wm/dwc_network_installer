@@ -558,6 +558,46 @@ exit 0
 fi
 if [ "$1" == "--test-build" ] ; then
         test
+	exit
+elif [ "$1" == "--cron" ] ; then
+# This is a work-in-progress. This will allow the user to add a cron script to auto-start master_server on boot.
+echo "Checking if there is a cron available for $USER"
+crontab -l -u $USER |grep "@reboot sh /start-altwfc.sh >/cron-logs/cronlog 2>&1"
+if [ $? != "0" ] ; then
+	echo "No cron job is currently installed"
+	echo "Working the magic. Hang tight!"
+cat > /start-alwtfc.sh <<EOF
+#!/bin/sh
+cd /
+cd $PWD/dwc_network_server_emulator
+python master_server.py
+cd /
+EOF
+chmod +x /start-altwfc.sh
+mkdir -p /cron-logs
+echo "Creating the cron job now!"
+echo "@reboot sh /start-altwfc.sh >/cron-logs/cronlog 2>&1" >/tmp/alt-cron
+crontab -u $USER /tmp/alt-cron
+echo "Done! Reboot now to see if master server comes up on its own."
+exit
+else
+	echo "Okay I'll assume you didn't move anything relating to the cron job"
+	echo "and delete whatever I set up last."
+	echo "I will NOT be held responsible for any damange this step does to your server"
+	read -p "Continue? [y/n]: " crondelete
+	if [ $crondelete == n ] ; then
+		echo "Goodbye!"
+		exit
+	else
+		echo "Deleting...."
+		rm -rf /start-alwtfc.sh
+		rm -rf /cron-logs
+		echo "THIS NEXT PART IS NOT REVERSABLE!!!"
+		crontab -u root -r -i
+		echo "Done!"
+		exit
+	fi
+fi
 fi
 root_check
 if [ "$1" != "-s" ]; then
@@ -605,4 +645,5 @@ echo "Replace 'username' and 'group' with your environment."
 echo "If you don't know what your username is type 'who' or 'id'"
 echo "If you don't know what group you are a part of, it is most likely your username."
 echo "Thank you for using this script and have a nice day!"
-exit 0
+echo "If you'd like to insert a cron job so master starts up, issue '--cron' when running this script."
+exit
