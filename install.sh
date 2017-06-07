@@ -573,7 +573,7 @@ cd $PWD/dwc_network_server_emulator
 python master_server.py
 cd /
 EOF
-chmod +x /start-altwfc.sh
+chmod 777 /start-altwfc.sh
 mkdir -p /cron-logs
 echo "Creating the cron job now!"
 echo "@reboot sh /start-altwfc.sh >/cron-logs/cronlog 2>&1" >/tmp/alt-cron
