@@ -558,7 +558,6 @@ exit 0
 fi
 if [ "$1" == "--test-build" ] ; then
         test
-        exit 0
 fi
 root_check
 if [ "$1" != "-s" ]; then
