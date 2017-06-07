@@ -6,4 +6,5 @@ before_script:
     - curl -L "https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/custom-dom-gen.sh"
 script:
     - sudo bash install.sh --test-build
+    - sudo bash install.sh --test-new-apache
     - sudo bash custom-dom-gen.sh --test-build
