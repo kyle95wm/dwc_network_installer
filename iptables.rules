@@ -9,7 +9,7 @@
 # Accept established the related connections from everyone
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 # Accept SSH from home IP
--A INPUT -s INSERT.YOUR.IP.HERE -p tcp -m tcp --dport 22 -j ACCEPT
+#-A INPUT -s INSERT.YOUR.IP.HERE -p tcp -m tcp --dport 22 -j ACCEPT
 # Accept HTTP and HTTPS requests
 -A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT
 # ALTWFC ports
@@ -20,6 +20,12 @@
 -A INPUT -m state --state NEW -m tcp -p tcp --dport 53 -j ACCEPT
 # More fancy DNS rules
 -A INPUT -m state --state NEW -m udp -p udp --dport 53 -j ACCEPT
+# Kitchen Sink entries below give full access to all server ports
+-A INPUT -s 10.0.0.0/8 -j ACCEPT
+-A INPUT -s 127.0.0.0/8 -j ACCEPT
+# The 172 subnet leaves a security hole on Amazon EC2 so disable it there
+#-A INPUT -s 172.16.0.0/12 -j ACCEPT
+-A INPUT -s 192.168.0.0/16 -j ACCEPT
 # Drop everything after this point
 -A INPUT -j DROP
 COMMIT

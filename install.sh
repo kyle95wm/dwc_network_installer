@@ -4,6 +4,7 @@
 # Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 ip=$(curl -s icanhazip.com) # This variable shows the user's external IP
+home_ip=$(echo $SSH_CLIENT | awk '{ print $1}')
 apache="/etc/apache2/sites-available" # This is the directory where sites are kept in case they need to be disabled in Apache
 serverclone=""
 menuchoice=""
@@ -21,7 +22,7 @@ mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
 UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
 UPDATE_FILE="$0.tmp"
-ver="2.5.6" # This lets the user know what version of the script they are running
+ver="2.5.7" # This lets the user know what version of the script they are running
 # Script Functions
 
 function root_check {
@@ -99,9 +100,6 @@ echo "1) Install the server [only run once!]"
 echo "2) Change admin page username/password"
 echo "3) Exit"
 echo "4) Full Uninstall - deletes everything except the packages."
-echo "5) Partial Uninstall - only disables Apache virtual hosts as well as"
-echo "disable the modules that were enabled"
-echo "6) Partial Install - sets up apache and dnsmasq assuming they're already installed"
 }
 
 function menu_prompt {
@@ -154,126 +152,6 @@ function menu_git_prompt {
 read -p "Please enter a number now: " serverclone
 }
 
-function partial_install {
-clear
-echo "Setting up Apache....."
-echo "Copying virtual hosts to sites-available for virtual hosting of the server"
-# The next several lines will copy the Nintendo virtual host files to sites-available in Apache's directory
-cp $vh/$vh1 $apache/$vh1
-cp $vh/$vh2 $apache/$vh2
-cp $vh/$vh3 $apache/$vh3
-cp $vh/$vh4 $apache/$vh4
-sleep 5s
-echo "Enabling virtual hosts....."
-a2ensite $vh1 $vh2 $vh3 $vh4
-if [ $? != "0" ] ; then
-echo "Oops! Something went wrong here!"
-mv $apache/$vh1 $apache/$vh5
-mv $apache/$vh2 $apache/$vh6
-mv $apache/$vh3 $apache/$vh7
-mv $apache/$vh4 $apache/$vh8
-a2ensite $vh5 $vh6 $vh7 $vh8
-echo "and just for good measure...."
-a2ensite $vh5.conf $vh6.conf $vh7.conf $vh8.conf
-else
-echo "It worked!"
-fi
-sleep 5s
-clear
-echo "Now lets enable some modules so we can make all of this work..."
-read -p "Are the proxy and proxy_http modules already enabled? [y/n] "
-if [ $REPLY == "y" ] ; then
-echo "I won't enable these again since you said the modules are already enabled...."
-echo "If for whatever reason you messed up, type the following command to enable the modules:"
-echo "a2enmod $mod1 $mod2"
-else
-a2enmod $mod1 $mod2
-fi
-if [ $? != "0" ] ; then
-echo "Looks like something is up with Apache."
-echo "I'm updating it now"
-apt-get upgrade apache2 -y >/dev/null
-service apache2 stop
-a2enmod $mod1 $mod2
-service apache2 start
-else
-echo "Yes!!!!"
-fi
-service apache2 restart
-service apache2 reload
-apachectl graceful
-echo "Great! Everything appears to be set up as far as Apache"
-echo "Fixing that nagging Apache FQDN error...."
-read -p "Do you already have a ServerName directive in your /etc/apache2/apache2.conf file? [y/n] "
-if [ $REPLY == "y" ] ; then
-echo "Okay I won't attempt to fix the error"
-echo "If for whatever reason you need to in the future type the following in to your /etc/apache2/apache2.conf:"
-echo "ServerName localhost"
-else
-cat >>/etc/apache2/apache2.conf <<EOF
-ServerName $fqdn
-EOF
-fi
-#a fix to fix issue: polaris-/dwc_network_server_emulator#413
-read -p "Do you want to add 'HttpProtocolOptions Unsafe LenientMethods Allow0.9' to apache2.conf this fixes when you have error codes like: 23400 on games [y/n] "
-if [ $REPLY == "y" ] ; then
-echo "Fixing it! adding: HttpProtocolOptions Unsafe LenientMethods Allow0.9"
-echo "to your apache2.conf!"
-cat >>/etc/apache2/apache2.conf <<EOF
-HttpProtocolOptions Unsafe LenientMethods Allow0.9
-EOF
-else
-echo "Okay I won't attempt to fix the error"
-echo "If for whatever reason you need to in the future type the following in to your /etc/apache2/apache2.conf:"
-echo "HttpProtocolOptions Unsafe LenientMethods Allow0.9"
-fi
-# That line is a little tricky to explain. Basically we're adding text to the end of the file that tells Apache the server name is localhost (your local machine).
-service apache2 restart # Restart Apache
-service apache2 reload # Reload Apache's config
-apachectl graceful # Another way to reload Apache because I'm paranoid
-echo "If any errors occour, please look into this yourself"
-sleep 2s
-clear
-echo "----------Lets configure DNSMASQ now----------"
-sleep 2s
-echo "What is your EXTERNAL IP?"
-echo "NOTE: If you plan on using this on a LAN, put the IP of your Linux system instead"
-echo "It's also best practice to make this address static in your /etc/network/interfaces file"
-echo "your LAN IP is"
-hostname  -I | cut -f1 -d' '
-echo "Your external IP is $IP"
-echo "Please type in either your LAN or external IP"
-read -e IP
-cat >>/etc/dnsmasq.conf <<EOF
-address=/nintendowifi.net/$IP
-EOF
-clear
-echo "DNSMasq setup completed!"
-clear
-service dnsmasq restart
-echo "Now, let's set up the admin page login info...."
-sleep 3s
-read -p "Would you like to set up an admin page login? This can be done later by re-running the script. [y/n]: " admin
-if [ $admin == y ] ; then
-echo "Please type your user name: "
-read -e USR # Waits for username
-echo "Please enter the password you want to use: "
-read -s PASS # Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
-cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF #Adds the recorded login information to a new file called "adminpageconf.json"
-{"username":"$USR","password":"$PASS"}
-EOF
-echo "Username and password configured!"
-echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
-else
-echo "Okay!"
-fi
-clear
-echo "Everything should be set up now"
-echo "I will now quit...."
-echo "Thank you for using this script."
-exit 0
-}
-
 function admin_page_credentials {
 echo "Please type your user name you would like to use: "
 read -e USR # Waits for username
@@ -286,9 +164,17 @@ echo "Username and password changed!"
 echo "NOTE: To get to the admin page go to <IP/Domain of server>:9009/"
 }
 
+function firewall-unlock {
+echo "Opening your firewall now!"
+rm -rf /etc/network/if-pre-up.d/iptables
+rm -rf /etc/iptables.rules
+iptables -F
+echo "Firewall is unsecured!"
+}
 function full_uninstall {
 clear
 echo "Okay! Here we go!"
+firewall-unlock
 echo "Disabling Apache virtual hosts....."
 
 a2dissite $vh1 $vh2 $vh3 $vh4
@@ -353,40 +239,35 @@ fi
 echo "Congrats! You just completly uninstalled your server."
 exit 0
 }
-
-function partial_uninstall {
-
-echo "ah, I see you chose to play it safe"
-echo "Off we go!"
-echo "Disabling virtual hosts..."
-a2dissite $vh1 $vh2 $vh3 $vh4
-if [ $? != "0" ] ; then
-echo "Ugh we broke it somehow..... continuing on"
-echo "Trying the backup plan"
-a2dissite $vh5 $vh6 $vh7 $vh8
+function firewall-lock {
+echo "Locking down your firewall now!"
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+iptables -A INPUT -s $home_ip -p tcp -m tcp --dport 22 -j ACCEPT
+iptables -A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT
+iptables -A INPUT -p tcp -m multiport --dports 9009,27500,29900,29901,29920,27900,28910,27901,9000,9002,8000,9001 -j ACCEPT
+iptables -A INPUT -p udp -m udp --dport 53 -j ACCEPT
+iptables -A INPUT -m state --state NEW -m tcp -p tcp --dport 53 -j ACCEPT
+iptables -A INPUT -m state --state NEW -m udp -p udp --dport 53 -j ACCEPT
+iptables -A INPUT -s 10.0.0.0/8 -j ACCEPT
+iptables -A INPUT -s 127.0.0.0/8 -j ACCEPT
+iptables -A INPUT -s 192.168.0.0/16 -j ACCEPT
+iptables -A INPUT -j DROP
+iptables-save >/etc/iptables.rules
+touch /etc/network/if-pre-up.d/iptables
+chmod +x /etc/network/if-pre-up.d/iptables
+cat >/etc/network/if-pre-up.d/iptables <<EOF
+#!/bin/bash
+/sbin/iptables-restore < /etc/iptables.rules
+EOF
+echo "Testing if firewall rules are applied...."
+iptables -S |grep "dports 9009,27500,29900,29901,29920,27900,28910,27901,9000,9002,8000,9001"
+if [ $? != 0 ] ; then
+	echo "TEST FAILED!"
+	exit 1
 else
-echo "Virtual hosts diabled"
-echo "$vh1 $vh2 $vh3 $vh4"
-sleep 2s
+	echo "Firewall is secure!"
 fi
-echo "Disabling modules...."
-a2dismod $mod2 $mod1
-if [ $? != "0" ] ; then
-echo "Okay we broke it again.... dont worry about it"
-else
-echo "Mods diabled $mod1 $mod2"
-fi
-echo "Okay! Well that's pretty much it."
-clear
-echo "Deleting dwc_network_server_emulator git clone....."
-rm -r -f ./dwc_network_server_emulator
-if [ $? != "0" ] ; then
-echo "Something went wrong! Please delete the directory yourself."
-else
-echo "git clone deleted successfully...."
-echo
-fi
-exit 0
 }
 function full_install {
 echo "Before we begin, you should know it's best to run this script on a completly squeeky clean install of Linux"
@@ -397,6 +278,16 @@ echo "Okay then, come back whenever you're ready."
 exit 1
 else
 echo "You got it! Let's-a-go!"
+fi
+echo "For this first step, I'm going to try to lock down your IPTABLES setup so that only YOU can SSH into your server."
+echo "Don't worry, people will still be able to connect and play on your server after we're done."
+echo "This is just to stop the script kiddies from scanning for your SSH port and hacking into it."
+read -p "Would you like to lock down the firewall on this server? [y/n] (Y): " lockdown
+if [ -z $lockdown ] ; then
+	$lockdown=y
+fi
+if [ $lockdown == y ] ; then
+	firewall-lock
 fi
 echo "Let me install a few upgrade and packages on your system for you...."
 echo "If you already have a package installed, I'll simply skip over it or upgrade it"
@@ -559,6 +450,12 @@ fi
 if [ "$1" == "--test-build" ] ; then
         test
 	exit
+elif [ "$1" == "--test-fw-lock" ] ; then
+firewall-lock
+exit
+elif [ "$1" == "--test-fw-unlock" ] ; then
+firewall-unlock
+exit
 elif [ "$1" == "--test-new-apache" ] ; then
 # This tests the new apache fix
 apt-get update --fix-missing
@@ -649,15 +546,12 @@ echo
 echo "Hello and welcome to my installation script."
 menu
 menu_prompt
-until [ $menuchoice -le "6" ] ; do
+until [ $menuchoice -le "4" ] ; do
 clear
 menu
 menu_error
 menu_prompt
 done
-if [ $menuchoice == "6" ] ; then
-partial_install
-fi
 if [ $menuchoice == "2" ] ; then
 admin_page_credentials
 fi
@@ -666,9 +560,6 @@ exit
 fi
 if [ $menuchoice == "4" ] ; then
 full_uninstall
-fi
-if [ $menuchoice == "5" ] ; then
-partial_uninstall
 fi
 if [ $menuchoice == "1" ] ; then
 full_install
