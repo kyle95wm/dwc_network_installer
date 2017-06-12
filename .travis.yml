@@ -10,3 +10,5 @@ script:
     - sudo bash custom-dom-gen.sh --test-build
     - sudo bash install.sh --test-fw-lock
     - sudo bash install.sh --test-fw-unlock
+    - sudo bash install.sh --test-add-cron
+    - sudo bash install.sh --test-remove-cron

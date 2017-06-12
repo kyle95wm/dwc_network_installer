@@ -22,7 +22,7 @@ mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
 UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
 UPDATE_FILE="$0.tmp"
-ver="2.5.7" # This lets the user know what version of the script they are running
+ver="2.5.8" # This lets the user know what version of the script they are running
 # Script Functions
 
 function root_check {
@@ -56,42 +56,42 @@ fi
 function init {
 ls |grep install.sh
 if [ $? != "0" ] ; then
-echo "Please run this script in the current directory where it is located."
-exit 1
+    echo "Please run this script in the current directory where it is located."
+    exit 1
 else
-echo "Script confirmed present"
-echo "Let's continue..."
-sleep 3s
+    echo "Script confirmed present"
+    echo "Let's continue..."
+    sleep 3s
 fi
 echo "Checking for apt...."
 if [ -d "/etc/apt" ] ; then
-echo "apt-get detected"
+    echo "apt-get detected"
 else
-echo "apt not detected. This means your OS is not supported by this script."
-echo "Please consider running Ubuntu or Raspbian or any other Debian distro"
-echo "that supports apt-get."
-exit 1
+    echo "apt not detected. This means your OS is not supported by this script."
+    echo "Please consider running Ubuntu or Raspbian or any other Debian distro"
+    echo "that supports apt-get."
+    exit 1
 fi
 echo "Checking for github package....."
 apt-get update --fix-missing
 dpkg -L git >/dev/null
 if [ $? != "0" ] ; then
-echo "Installing git....."
-apt-get install git -y >/dev/null
+    echo "Installing git....."
+    apt-get install git -y >/dev/null
 else
-echo "Git has been detected. Moving on...."
+    echo "Git has been detected. Moving on...."
 fi
 echo
 echo
 echo
 if [ -d "dwc_network_server_emulator" ]; then
-echo "No need to re-clone"
+    echo "No need to re-clone"
 else
-echo "git clone not detected in $PWD"
-clear
-menu_git
-menu_git_prompt
-git_check
+    echo "git clone not detected in $PWD"
+    clear
+    menu_git
+    menu_git_prompt
+    git_check
 fi
 }
 function menu {
@@ -119,33 +119,33 @@ echo "3) DWC LITE - by kyle95wm - This version has no ban system or admin page. 
 }
 function git_check {
 if [ $serverclone == 1 ] ; then
-clear
-echo "Cloning the official repo....."
-git clone http://github.com/polaris-/dwc_network_server_emulator
+    clear
+    echo "Cloning the official repo....."
+    git clone http://github.com/polaris-/dwc_network_server_emulator
 elif [ $serverclone == 2 ] ; then
-echo "Cloning BeanJr's repository...."
-git clone http://github.com/kyle95wm/dwc_network_server_emulator
+    echo "Cloning BeanJr's repository...."
+    git clone http://github.com/kyle95wm/dwc_network_server_emulator
 elif [ $serverclone == 3 ] ; then
-echo "Cloning DWC LITE....."
-git clone https://github.com/kyle95wm/dwc_network_server_emulator_lite
-mv $PWD/dwc_network_server_emulator_lite/ $PWD/dwc_network_server_emulator/
+    echo "Cloning DWC LITE....."
+    git clone https://github.com/kyle95wm/dwc_network_server_emulator_lite
+    mv $PWD/dwc_network_server_emulator_lite/ $PWD/dwc_network_server_emulator/
 else
-echo "$serverclone is not a valid entry! You must type a number (1-3) from the list."
-echo "You will not be able to proceed without the git clone!"
-echo "Please re-run this script and try again."
-echo "Exiting...."
-exit 1
+    echo "$serverclone is not a valid entry! You must type a number (1-3) from the list."
+    echo "You will not be able to proceed without the git clone!"
+    echo "Please re-run this script and try again."
+    echo "Exiting...."
+    exit 1
 fi
 if [ $? != "0" ] ; then
-echo "<<<<<<<<PROBLEM CLONING GIT>>>>>>>>"
-echo "This may be caused by the github package not being properly installed."
-echo "Please consider re-installing the package manually by typing:"
-echo "apt-get remove git --purge"
-echo "apt-get update --fix-missing"
-echo "apt-get install git"
-echo "And then try running the script again."
-echo "Exiting now...."
-exit 1
+    echo "<<<<<<<<PROBLEM CLONING GIT>>>>>>>>"
+    echo "This may be caused by the github package not being properly installed."
+    echo "Please consider re-installing the package manually by typing:"
+    echo "apt-get remove git --purge"
+    echo "apt-get update --fix-missing"
+    echo "apt-get install git"
+    echo "And then try running the script again."
+    echo "Exiting now...."
+    exit 1
 fi
 }
 function menu_git_prompt {
@@ -176,43 +176,42 @@ clear
 echo "Okay! Here we go!"
 firewall-unlock
 echo "Disabling Apache virtual hosts....."
-
 a2dissite $vh1 $vh2 $vh3 $vh4
 if [ $? != "0" ] ; then
-echo "Ugh we broke it somehow..... continuing on"
-echo "Trying the backup plan"
-a2dissite $vh5 $vh6 $vh7 $vh8
+    echo "Ugh we broke it somehow..... continuing on"
+    echo "Trying the backup plan"
+    a2dissite $vh5 $vh6 $vh7 $vh8
 else
-echo "Virtual hosts diabled"
-echo "$vh1 $vh2 $vh3 $vh4"
-echo "Now deleting from sites-available....."
-rm -f $apache/$vh1
+    echo "Virtual hosts diabled"
+    echo "$vh1 $vh2 $vh3 $vh4"
+    echo "Now deleting from sites-available....."
+    rm -f $apache/$vh1
 if [ $? != "0" ] ; then
-echo "ERROR on deleting $vh1 - trying backup"
-rm -f $apache/$vh5
+    echo "ERROR on deleting $vh1 - trying backup"
+    rm -f $apache/$vh5
 else
-echo "OK!"
+    echo "OK!"
 fi
-rm -f $apache/$vh2
+    rm -f $apache/$vh2
 if [ $? != "0" ] ; then
-echo "ERROR on deleting $vh2 - trying backup"
-rm -f $apache/$vh6
+    echo "ERROR on deleting $vh2 - trying backup"
+    rm -f $apache/$vh6
 else
-echo "OK!"
+    echo "OK!"
 fi
-rm -f $apache/$vh3
+    rm -f $apache/$vh3
 if [ $? != "0" ] ; then
-echo "ERROR on deleting $vh3 - trying backup"
-rm -f $apache/$vh7
+    echo "ERROR on deleting $vh3 - trying backup"
+    rm -f $apache/$vh7
 else
-echo "OK!"
+    echo "OK!"
 fi
 rm -f $apache/$vh4
 if [ $? != "0" ] ; then
-echo "ERROR on deleting $vh4 - trying backup"
-rm -f $apache/$vh8
+    echo "ERROR on deleting $vh4 - trying backup"
+    rm -f $apache/$vh8
 else
-echo "OK!"
+    echo "OK!"
 fi
 echo "Done!"
 sleep 2s
@@ -220,9 +219,9 @@ fi
 echo "Disabling modules...."
 a2dismod $mod2 $mod1
 if [ $? != "0" ] ; then
-echo "Okay we broke it again.... dont worry about it"
+    echo "Okay we broke it again.... dont worry about it"
 else
-echo "Mods diabled $mod1 $mod2"
+    echo "Mods diabled $mod1 $mod2"
 fi
 echo "AltWFC installed apache2, python-twisted, dnsmasq and git. If you do not want these, run sudo apt-get remove apache2 python-twisted dnsmasq git"
 echo "This is just in case you use these programs."
@@ -231,13 +230,14 @@ clear
 echo "Deleting dwc_network_server_emulator git clone....."
 rm -r -f $PWD/dwc_network_server_emulator
 if [ $? != "0" ] ; then
-echo "Something went wrong! Please delete the directory yourself."
+    echo "Something went wrong! Please delete the directory yourself."
 else
-echo "git clone deleted successfully...."
+    echo "git clone deleted successfully...."
 echo
 fi
 echo "Congrats! You just completly uninstalled your server."
-exit 0
+remove-cron
+exit
 }
 function firewall-lock {
 echo "Locking down your firewall now!"
@@ -274,17 +274,17 @@ echo "Before we begin, you should know it's best to run this script on a complet
 echo "preferably Ubuntu or Raspbian as some things can go horribly wrong if run on an already configured system"
 read -p "Would you like to continue with the install - at your own risk of course..... [y/n] : "
 if [ $REPLY != "y" ] ; then
-echo "Okay then, come back whenever you're ready."
-exit 1
+    echo "Okay then, come back whenever you're ready."
+    exit 1
 else
-echo "You got it! Let's-a-go!"
+    echo "You got it! Let's-a-go!"
 fi
 echo "For this first step, I'm going to try to lock down your IPTABLES setup so that only YOU can SSH into your server."
 echo "Don't worry, people will still be able to connect and play on your server after we're done."
 echo "This is just to stop the script kiddies from scanning for your SSH port and hacking into it."
 read -p "Would you like to lock down the firewall on this server? [y/n] (Y): " lockdown
 if [ -z $lockdown ] ; then
-	$lockdown=y
+	lockdown=y
 fi
 if [ $lockdown == y ] ; then
 	firewall-lock
@@ -295,11 +295,11 @@ apt-get update -y --fix-missing # Fixes missing apt-get repository errors on som
 echo "Updated repo lists...."
 read -p "Install package upgrades? This is not reccommended because it could break things. [y/n]?"
 if [ $REPLY != y ] ; then
-echo "Okay I won't upgrade your system."
+    echo "Okay I won't upgrade your system."
 else
-echo "Installing package upgrades... go kill some time as this may take a few minutes..."
-apt-get upgrade -y # Upgrades all already installed packages on your system
-echo "Upgrades complete!"
+    echo "Installing package upgrades... go kill some time as this may take a few minutes..."
+    apt-get upgrade -y # Upgrades all already installed packages on your system
+    echo "Upgrades complete!"
 fi
 clear
 echo "Now installing required packages..."
@@ -317,30 +317,30 @@ sleep 5s
 echo "Enabling virtual hosts....."
 a2ensite $vh1 $vh2 $vh3 $vh4
 if [ $? != "0" ] ; then
-echo "Oops! Something went wrong here!"
-mv $apache/$vh1 $apache/$vh5
-mv $apache/$vh2 $apache/$vh6
-mv $apache/$vh3 $apache/$vh7
-mv $apache/$vh4 $apache/$vh8
-a2ensite $vh5 $vh6 $vh7 $vh8
-echo "and just for good measure...."
-a2ensite $vh5.conf $vh6.conf $vh7.conf $vh8.conf
+    echo "Oops! Something went wrong here!"
+    mv $apache/$vh1 $apache/$vh5
+    mv $apache/$vh2 $apache/$vh6
+    mv $apache/$vh3 $apache/$vh7
+    mv $apache/$vh4 $apache/$vh8
+    a2ensite $vh5 $vh6 $vh7 $vh8
+    echo "and just for good measure...."
+    a2ensite $vh5.conf $vh6.conf $vh7.conf $vh8.conf
 else
-echo "It worked!"
+    echo "It worked!"
 fi
 sleep 5s
 clear
 echo "Now lets enable some modules so we can make all of this work..."
 a2enmod $mod1 $mod2
 if [ $? != "0" ] ; then
-echo "Looks like something is up with Apache."
-echo "I'm updating it now"
-apt-get upgrade apache2 -y >/dev/null
-service apache2 stop
-a2enmod $mod1 $mod2
-service apache2 start
+    echo "Looks like something is up with Apache."
+    echo "I'm updating it now"
+    apt-get upgrade apache2 -y >/dev/null
+    service apache2 stop
+    a2enmod $mod1 $mod2
+    service apache2 start
 else
-echo "Yes!!!!"
+    echo "Yes!!!!"
 fi
 service apache2 restart
 service apache2 reload
@@ -353,15 +353,15 @@ EOF
 #a fix to fix issue: polaris-/dwc_network_server_emulator#413
 read -p "Do you want to add 'HttpProtocolOptions Unsafe LenientMethods Allow0.9' to apache2.conf this fixes when you have error codes like: 23400 on games [y/n] "
 if [ $REPLY == "y" ] ; then
-echo "Fixing it! adding: HttpProtocolOptions Unsafe LenientMethods Allow0.9"
-echo "to your apache2.conf!"
+    echo "Fixing it! adding: HttpProtocolOptions Unsafe LenientMethods Allow0.9"
+    echo "to your apache2.conf!"
 cat >>/etc/apache2/apache2.conf <<EOF
 HttpProtocolOptions Unsafe LenientMethods Allow0.9
 EOF
 else
-echo "Okay I won't attempt to fix the error"
-echo "If for whatever reason you need to in the future type the following in to your /etc/apache2/apache2.conf:"
-echo "HttpProtocolOptions Unsafe LenientMethods Allow0.9"
+    echo "Okay I won't attempt to fix the error"
+    echo "If for whatever reason you need to in the future type the following in to your /etc/apache2/apache2.conf:"
+    echo "HttpProtocolOptions Unsafe LenientMethods Allow0.9"
 fi
 # That line is a little tricky to explain. Basically we're adding text to the end of the file that tells Apache the server name is localhost (your local machine).
 service apache2 restart # Restart Apache
@@ -392,20 +392,60 @@ echo "Now, let's set up the admin page login info...."
 sleep 3s
 read -p "Would you like to set up an admin page login? This can be done later by re-running the script. [y/n]: " admin
 if [ $admin == y ] ; then
-echo "Please type your user name: "
-read -e USR # Waits for username
-echo "Please enter the password you want to use: "
-read -s PASS # Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
+    echo "Please type your user name: "
+    read -e USR # Waits for username
+    echo "Please enter the password you want to use: "
+    read -s PASS # Waits for password - NOTE: nothing will show up while typing just like the passwd command in Linux
 cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF
 {"username":"$USR","password":"$PASS"}
 EOF
-echo "Username and password configured!"
-echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
-clear
+    echo "Username and password configured!"
+    echo "NOTE: To get to the admin page type in the IP of your server :9009/banhammer"
+    clear
 else
-echo "Okay!"
+    echo "Okay!"
 fi
 echo "setup complete! quitting now...."
+echo "But wait! For this last and final step, I could optionally add a Cron job to allow your master server to start on boot."
+echo "This will make it so you don't have to keep running 'screen python master_server.py' each time you boot your server"
+echo "It's one of those 'set it and forget it' type things."
+read -p "Would you like to add a cron job? [y/n]: " cron
+if [ $cron == y ] ; then
+    add-cron
+else
+    echo "Okay, I won't add the cron job. You will have to start the server manually."
+fi
+}
+function add-cron {
+echo "Checking if there is a cron available for $USER"
+crontab -l -u $USER |grep "@reboot sh /start-altwfc.sh >/cron-logs/cronlog 2>&1"
+if [ $? != "0" ] ; then
+    echo "No cron job is currently installed"
+    echo "Working the magic. Hang tight!"
+cat > /start-altwfc.sh <<EOF
+#!/bin/sh
+cd /
+cd $PWD/dwc_network_server_emulator
+python master_server.py
+cd /
+EOF
+    chmod 777 /start-altwfc.sh
+    mkdir -p /cron-logs
+    echo "Creating the cron job now!"
+    echo "@reboot sh /start-altwfc.sh >/cron-logs/cronlog 2>&1" >/tmp/alt-cron
+    crontab -u $USER /tmp/alt-cron
+    echo "Done! Reboot now to see if master server comes up on its own."
+    exit
+fi
+}
+function remove-cron {
+echo "Deleting...."
+rm -rf /start-altwfc.sh
+rm -rf /cron-logs
+echo "Deleting cron for "
+crontab -u $USER -r
+echo "Done!"
+exit
 }
 function test {
 apt-get update --fix-missing
@@ -444,41 +484,45 @@ exit
 }
 # End of functions
 if [ "$1" == "-ver" ] ; then
-echo "You are currently running version $ver of the script."
-exit 0
+    echo "You are currently running version $ver of the script."
+    exit 0
 fi
 if [ "$1" == "--test-build" ] ; then
         test
 	exit
 elif [ "$1" == "--test-fw-lock" ] ; then
-firewall-lock
-exit
+    firewall-lock
+    exit
 elif [ "$1" == "--test-fw-unlock" ] ; then
-firewall-unlock
-exit
+    firewall-unlock
+    exit
+elif [ "$1" == "--test-add-cron" ] ; then
+    add-cron
+elif [ "$1" == "--test-remove-cron" ] ; then
+    remove-cron
 elif [ "$1" == "--test-new-apache" ] ; then
-# This tests the new apache fix
-apt-get update --fix-missing
-apt-get install git -y
-git clone http://github.com/kyle95wm/dwc_network_server_emulator
-apt-get update -y --fix-missing
-apt-get install apache2 python2.7 python-twisted dnsmasq -y
-cp $vh/$vh1 $apache/$vh1
-cp $vh/$vh2 $apache/$vh2
-cp $vh/$vh3 $apache/$vh3
-cp $vh/$vh4 $apache/$vh4
-a2ensite $vh1 $vh2 $vh3 $vh4
-a2enmod $mod1 $mod2
-service apache2 restart
-service apache2 reload
-apachectl graceful
+    # This tests the new apache fix
+    apt-get update --fix-missing
+    apt-get install git -y
+    git clone http://github.com/kyle95wm/dwc_network_server_emulator
+    apt-get update -y --fix-missing
+    apt-get install apache2 python2.7 python-twisted dnsmasq -y
+    cp $vh/$vh1 $apache/$vh1
+    cp $vh/$vh2 $apache/$vh2
+    cp $vh/$vh3 $apache/$vh3
+    cp $vh/$vh4 $apache/$vh4
+    a2ensite $vh1 $vh2 $vh3 $vh4
+    a2enmod $mod1 $mod2
+    service apache2 restart
+    service apache2 reload
+    apachectl graceful
 cat >>/etc/apache2/apache2.conf <<EOF
 ServerName localhost
 EOF
 cat >>/etc/apache2/apache2.conf <<EOF
 HttpProtocolOptions Unsafe LenientMethods Allow0.9
 EOF
-service apache2 restart >/dev/null
+    service apache2 restart >/dev/null
 cat >>/etc/dnsmasq.conf <<EOF
 address=/nintendowifi.net/$ip
 EOF
@@ -488,51 +532,12 @@ echo "################# END OF DNSMASQ CONFIG #####################"
 cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF
 {"username":"admin","password":"admin"}
 EOF
-if [ $? == "0" ] ; then
-	echo "Build complete!"
-else
-	echo "BUILD FAILED!"
-fi
-exit
-elif [ "$1" == "--cron" ] ; then
-# This is a work-in-progress. This will allow the user to add a cron script to auto-start master_server on boot.
-echo "Checking if there is a cron available for $USER"
-crontab -l -u $USER |grep "@reboot sh /start-altwfc.sh >/cron-logs/cronlog 2>&1"
-if [ $? != "0" ] ; then
-	echo "No cron job is currently installed"
-	echo "Working the magic. Hang tight!"
-cat > /start-altwfc.sh <<EOF
-#!/bin/sh
-cd /
-cd $PWD/dwc_network_server_emulator
-python master_server.py
-cd /
-EOF
-chmod 777 /start-altwfc.sh
-mkdir -p /cron-logs
-echo "Creating the cron job now!"
-echo "@reboot sh /start-altwfc.sh >/cron-logs/cronlog 2>&1" >/tmp/alt-cron
-crontab -u $USER /tmp/alt-cron
-echo "Done! Reboot now to see if master server comes up on its own."
-exit
-else
-	echo "Okay I'll assume you didn't move anything relating to the cron job"
-	echo "and delete whatever I set up last."
-	echo "I will NOT be held responsible for any damange this step does to your server"
-	read -p "Continue? [y/n]: " crondelete
-	if [ $crondelete == n ] ; then
-		echo "Goodbye!"
-		exit
-	else
-		echo "Deleting...."
-		rm -rf /start-altwfc.sh
-		rm -rf /cron-logs
-		echo "THIS NEXT PART IS NOT REVERSABLE!!!"
-		crontab -u root -r -i
-		echo "Done!"
-		exit
-	fi
-fi
+    if [ $? == "0" ] ; then
+        echo "Build complete!"
+    else
+        echo "BUILD FAILED!"
+    fi
+    exit
 fi
 root_check
 if [ "$1" != "-s" ]; then
@@ -547,22 +552,22 @@ echo "Hello and welcome to my installation script."
 menu
 menu_prompt
 until [ $menuchoice -le "4" ] ; do
-clear
-menu
-menu_error
-menu_prompt
+    clear
+    menu
+    menu_error
+    menu_prompt
 done
 if [ $menuchoice == "2" ] ; then
-admin_page_credentials
+    admin_page_credentials
 fi
 if [ $menuchoice == "3" ] ; then
-exit
+    exit
 fi
 if [ $menuchoice == "4" ] ; then
-full_uninstall
+    full_uninstall
 fi
 if [ $menuchoice == "1" ] ; then
-full_install
+    full_install
 fi
 clear
 echo "Please note!"
@@ -574,5 +579,4 @@ echo "Replace 'username' and 'group' with your environment."
 echo "If you don't know what your username is type 'who' or 'id'"
 echo "If you don't know what group you are a part of, it is most likely your username."
 echo "Thank you for using this script and have a nice day!"
-echo "If you'd like to insert a cron job so master starts up, issue '--cron' when running this script."
 exit
