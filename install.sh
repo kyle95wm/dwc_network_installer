@@ -1,6 +1,11 @@
 #!/bin/bash
 # DWC Network Installer script by kyle95wm/beanjr
 # NOTE TO DEVELOPERS: please remember to edit the test build section of this script if you have made any changes.
+### Check if system has curl installed
+dpkg -L curl >/dev/null
+if [ $? != 0 ] ; then
+	apt-get update && apt-get install curl -y
+fi
 # Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 ip=$(curl -s icanhazip.com) # This variable shows the user's external IP
