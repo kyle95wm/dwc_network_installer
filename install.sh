@@ -167,6 +167,8 @@ cat > $PWD/dwc_network_server_emulator/adminpageconf.json <<EOF
 EOF
 echo "Username and password changed!"
 echo "NOTE: To get to the admin page go to <IP/Domain of server>:9009/"
+echo "Rebooting!"
+reboot
 }
 
 function firewall-unlock {
