@@ -87,6 +87,7 @@ echo "################# END OF DNSMASQ CONFIG #####################"
 exit
 ####
 fi
+fi
 if [ $UID != 0 ] ; then
 	echo "Please run this script as root"
 	exit 1
