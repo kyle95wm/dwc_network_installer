@@ -87,4 +87,3 @@ echo "Done!"
 echo "enabling...."
 a2ensite *.$domain.conf
 apachectl graceful
-fi
