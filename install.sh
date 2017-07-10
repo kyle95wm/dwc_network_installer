@@ -18,10 +18,18 @@ vh1="gamestats2.gs.nintendowifi.net.conf" # This is the first virtual host file
 vh2="gamestats.gs.nintendowifi.net.conf" # This is the second virtual host file
 vh3="nas-naswii-dls1-conntest.nintendowifi.net.conf" # This is the third virtual host file
 vh4="sake.gs.nintendowifi.net.conf" # This is the fourth virtual host file
-vh5="gamestats2.gs.nintendowifi.net" # Fallback for vh1
-vh6="gamestats.gs.nintendowifi.net" # Fallback for vh2
-vh7="nas-naswii-dls1-conntest.nintendowifi.net" # Fallback for vh3
-vh8="sake.gs.nintendowifi.net" # Fallback for vh4
+#vh5="gamestats2.gs.nintendowifi.net" # Fallback for vh1
+#vh6="gamestats.gs.nintendowifi.net" # Fallback for vh2
+#vh7="nas-naswii-dls1-conntest.nintendowifi.net" # Fallback for vh3
+#vh8="sake.gs.nintendowifi.net" # Fallback for vh4
+vh9="gamestats2.gs.wiimmfi.de.conf"
+vh10="gamestats.gs.wiimmfi.de.conf"
+vh11="nas-naswii-dls1-conntest.wiimmfi.de.conf"
+vh12="sake.gs.wiimmfi.de.conf"
+#vh13="gamestats2.gs.wiimmfi.de"
+#vh14="gamestats.gs.wiimmfi.de"
+#vh15="nas-naswii-dls1-conntest.wiimmfi.de"
+#vh16="sake.gs.wiimmfi.de"
 mod1="proxy" # This is a proxy mod that is dependent on the other 2
 mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
@@ -29,7 +37,84 @@ UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/mas
 UPDATE_FILE="$0.tmp"
 ver="2.5.8" # This lets the user know what version of the script they are running
 # Script Functions
+function wiimmfi {
+# This function will add Wiimmfi/CTGP playability to this server
+echo "Creating Wiimmfi virtual hosts...."
+touch /etc/apache2/sites-available/gamestats2.gs.wiimmfi.de.conf
+touch /etc/apache2/sites-available/gamestats.gs.wiimmfi.de.conf
+touch /etc/apache2/sites-available/nas-naswii-dls1-conntest.wiimmfi.de.conf
+touch /etc/apache2/sites-available/sake.gs.wiimmfi.de.conf
+cat >/etc/apache2/sites-available/gamestats2.gs.wiimmfi.de.conf <<EOF
+<VirtualHost *:80>
+ServerAdmin webmaster@localhost
+ServerName gamestats2.gs.wiimmfi.de
+ServerAlias "gamestats2.gs.wiimmfi.de, gamestats2.gs.wiimmfi.de"
 
+ProxyPreserveHost On
+
+ProxyPass / http://127.0.0.1:9002/
+ProxyPassReverse / http://127.0.0.1:9002/
+</VirtualHost>
+EOF
+
+cat >/etc/apache2/sites-available/gamestats.gs.wiimmfi.de.conf <<EOF
+<VirtualHost *:80>
+ServerAdmin webmaster@localhost
+ServerName gamestats.gs.wiimmfi.de
+ServerAlias "gamestats.gs.wiimmfi.de, gamestats.gs.wiimmfi.de"
+ProxyPreserveHost On
+ProxyPass / http://127.0.0.1:9002/
+ProxyPassReverse / http://127.0.0.1:9002/
+</VirtualHost>
+EOF
+
+cat >/etc/apache2/sites-available/nas-naswii-dls1-conntest.wiimmfi.de.conf <<EOF
+<VirtualHost *:80>
+ServerAdmin webmaster@localhost
+ServerName naswii.wiimmfi.de
+ServerAlias "naswii.wiimmfi.de, naswii.wiimmfi.de"
+ServerAlias "nas.wiimmfi.de"
+ServerAlias "nas.wiimmfi.de, nas.wiimmfi.de"
+ServerAlias "dls1.wiimmfi.de"
+ServerAlias "dls1.wiimmfi.de, dls1.wiimmfi.de"
+ServerAlias "conntest.wiimmfi.de"
+ServerAlias "conntest.wiimmfi.de, conntest.wiimmfi.de"
+ProxyPreserveHost On
+ProxyPass / http://127.0.0.1:9000/
+ProxyPassReverse / http://127.0.0.1:9000/
+</VirtualHost>
+EOF
+
+cat >/etc/apache2/sites-available/sake.gs.wiimmfi.de.conf <<EOF
+<VirtualHost *:80>
+ServerAdmin webmaster@localhost
+ServerName sake.gs.wiimmfi.de
+ServerAlias sake.gs.wiimmfi.de *.sake.gs.wiimmfi.de
+ServerAlias secure.sake.gs.wiimmfi.de
+ServerAlias secure.sake.gs.wiimmfi.de *.secure.sake.gs.wiimmfi.de
+
+ProxyPass / http://127.0.0.1:8000/
+
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+echo "Done!"
+echo "enabling...."
+a2ensite *.wiimmfi.de.conf
+service apache2 restart
+echo "Adding DNS record to DNSMASQ config"
+cat >>/etc/dnsmasq.conf <<EOF
+address=/wiimmfi.de/$(curl -s icanhazip.com)
+EOF
+service dnsmasq restart
+echo "Checking DNS records...."
+dig @localhost gamestats.gs.wiimmfi.de
+dig @localhost gamestats2.gs.wiimmfi.de
+dig @localhost nas-naswii-dls1-conntest.wiimmfi.de
+dig @localhost sake.gs.wiimmfi.de
+echo "DNS tests done!"
+}
 function root_check {
 # Check if run as root
 if [ "$UID" -ne "$ROOT_UID" ] ; then # if the user ID is not root...
@@ -105,6 +190,7 @@ echo "1) Install the server [only run once!]"
 echo "2) Change admin page username/password"
 echo "3) Exit"
 echo "4) Full Uninstall - deletes everything except the packages."
+echo "5) Add Wiimmfi/CTGP support"
 }
 
 function menu_prompt {
@@ -183,55 +269,15 @@ clear
 echo "Okay! Here we go!"
 firewall-unlock
 echo "Disabling Apache virtual hosts....."
-a2dissite $vh1 $vh2 $vh3 $vh4
-if [ $? != "0" ] ; then
-    echo "Ugh we broke it somehow..... continuing on"
-    echo "Trying the backup plan"
-    a2dissite $vh5 $vh6 $vh7 $vh8
-else
-    echo "Virtual hosts diabled"
-    echo "$vh1 $vh2 $vh3 $vh4"
-    echo "Now deleting from sites-available....."
-    rm -f $apache/$vh1
-if [ $? != "0" ] ; then
-    echo "ERROR on deleting $vh1 - trying backup"
-    rm -f $apache/$vh5
-else
-    echo "OK!"
-fi
-    rm -f $apache/$vh2
-if [ $? != "0" ] ; then
-    echo "ERROR on deleting $vh2 - trying backup"
-    rm -f $apache/$vh6
-else
-    echo "OK!"
-fi
-    rm -f $apache/$vh3
-if [ $? != "0" ] ; then
-    echo "ERROR on deleting $vh3 - trying backup"
-    rm -f $apache/$vh7
-else
-    echo "OK!"
-fi
-rm -f $apache/$vh4
-if [ $? != "0" ] ; then
-    echo "ERROR on deleting $vh4 - trying backup"
-    rm -f $apache/$vh8
-else
-    echo "OK!"
-fi
-echo "Done!"
+a2dissite $vh1 $vh2 $vh3 $vh4 $vh9 $vh10 $vh11 $vh12
+echo "Virtual hosts diabled"
+echo "$vh1 $vh2 $vh3 $vh4 $vh9 $vh10 $vh11 $vh12"
 sleep 2s
-fi
-echo "Disabling modules...."
+echo "Disabling modules and removing packages...."
 a2dismod $mod2 $mod1
-if [ $? != "0" ] ; then
-    echo "Okay we broke it again.... dont worry about it"
-else
-    echo "Mods diabled $mod1 $mod2"
-fi
-echo "AltWFC installed apache2, python-twisted, dnsmasq and git. If you do not want these, run sudo apt-get remove apache2 python-twisted dnsmasq git"
-echo "This is just in case you use these programs."
+#echo "AltWFC installed apache2, python-twisted, dnsmasq and git. If you do not want these, run sudo apt-get remove apache2 python-twisted dnsmasq git"
+#echo "This is just in case you use these programs."
+apt-get remove apache2 python-twisted dnsmasq git -y --purge
 sleep 4s
 clear
 echo "Deleting dwc_network_server_emulator git clone....."
@@ -323,18 +369,6 @@ cp $vh/$vh4 $apache/$vh4
 sleep 5s
 echo "Enabling virtual hosts....."
 a2ensite $vh1 $vh2 $vh3 $vh4
-if [ $? != "0" ] ; then
-    echo "Oops! Something went wrong here!"
-    mv $apache/$vh1 $apache/$vh5
-    mv $apache/$vh2 $apache/$vh6
-    mv $apache/$vh3 $apache/$vh7
-    mv $apache/$vh4 $apache/$vh8
-    a2ensite $vh5 $vh6 $vh7 $vh8
-    echo "and just for good measure...."
-    a2ensite $vh5.conf $vh6.conf $vh7.conf $vh8.conf
-else
-    echo "It worked!"
-fi
 sleep 5s
 clear
 echo "Now lets enable some modules so we can make all of this work..."
@@ -395,6 +429,12 @@ clear
 echo "DNSMasq setup completed!"
 clear
 service dnsmasq restart
+clear
+echo "Recently, a lot of people have asked me to include CTGP support for the server. I decided why not?"
+read -p "Would you like to enable the Wiimmfi virtual hosts? [y/n]: " wiimmfi-enable
+if [ $wiimmfi-enable == "y" ] ; then
+    wiimmfi
+fi
 echo "Now, let's set up the admin page login info...."
 sleep 3s
 read -p "Would you like to set up an admin page login? This can be done later by re-running the script. [y/n]: " admin
@@ -558,7 +598,7 @@ echo
 echo "Hello and welcome to my installation script."
 menu
 menu_prompt
-until [ $menuchoice -le "4" ] ; do
+until [ $menuchoice -le "5" ] ; do
     clear
     menu
     menu_error
@@ -573,17 +613,13 @@ fi
 if [ $menuchoice == "4" ] ; then
     full_uninstall
 fi
+if [ $menuchoice == "5" ] ; then
+wiimmfi
+exit
+fi
 if [ $menuchoice == "1" ] ; then
     full_install
 fi
 clear
-echo "Please note!"
-echo
-echo
-echo "If you performed any installation, please make sure to take ownership of the git clone by typing:"
-echo "sudo chown username:group dwc_network_server_emulator/ -R"
-echo "Replace 'username' and 'group' with your environment."
-echo "If you don't know what your username is type 'who' or 'id'"
-echo "If you don't know what group you are a part of, it is most likely your username."
 echo "Thank you for using this script and have a nice day!"
 exit
