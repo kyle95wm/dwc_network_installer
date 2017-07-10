@@ -8,6 +8,7 @@ if [ $? != 0 ] ; then
 fi
 # Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
+IP="" # Used for user input
 ip=$(curl -s icanhazip.com) # This variable shows the user's external IP
 home_ip=$(echo $SSH_CLIENT | awk '{ print $1}')
 apache="/etc/apache2/sites-available" # This is the directory where sites are kept in case they need to be disabled in Apache
@@ -105,7 +106,7 @@ a2ensite *.wiimmfi.de.conf
 service apache2 restart
 echo "Adding DNS record to DNSMASQ config"
 cat >>/etc/dnsmasq.conf <<EOF
-address=/wiimmfi.de/$(curl -s icanhazip.com)
+address=/wiimmfi.de/$IP
 EOF
 service dnsmasq restart
 echo "Checking DNS records...."
@@ -431,8 +432,8 @@ clear
 service dnsmasq restart
 clear
 echo "Recently, a lot of people have asked me to include CTGP support for the server. I decided why not?"
-read -p "Would you like to enable the Wiimmfi virtual hosts? [y/n]: " wiimmfi-enable
-if [ $wiimmfi-enable == "y" ] ; then
+read -p "Would you like to enable the Wiimmfi virtual hosts? [y/n]: " wiimmfienable
+if [ $wiimmfienable == "y" ] ; then
     wiimmfi
 fi
 echo "Now, let's set up the admin page login info...."
