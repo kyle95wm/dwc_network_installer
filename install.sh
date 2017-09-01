@@ -206,8 +206,8 @@ function menu_git {
 clear
 echo "Please pick from the list of git clones to use"
 echo "1) Polaris [OFFICIAL REPO]"
-echo "2) kyle95wm/BeanJr"
-echo "3) DWC LITE - by kyle95wm - This version has no ban system or admin page. This version is useful for LAN parties where everyone is trusted. There is an option to add IP addresses to a 'kick' table if you wish."
+echo "2) kyle95wm/BeanJr - This repo uses somewhat really old code but it works. Console activation is also a default. You will need to log into the admin page on port 9009 and go under 'Consoles' and activate any new consoles. New consoles will get error code 23888."
+echo "3) DWC LITE - by kyle95wm - This version has no ban system or admin page. This version is useful for LAN parties where everyone is trusted. There is an option to add IP addresses to a 'kick' table if you wish. THIS GIT WILL SOON BE REMOVED FROM THE LIST AS IT IS NO LONGER MAINTAINED!"
 }
 function git_check {
 if [ $serverclone == 1 ] ; then
