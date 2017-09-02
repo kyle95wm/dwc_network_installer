@@ -105,6 +105,17 @@ echo "enabling...."
 a2ensite *.wiimmfi.de.conf
 service apache2 restart
 echo "Adding DNS record to DNSMASQ config"
+echo "----------Lets configure DNSMASQ now----------"
+sleep 3s
+echo "What is your EXTERNAL IP?"
+echo "NOTE: If you plan on using this on a LAN, put the IP of your Linux system instead"
+echo "It's also best practice to make this address static in your /etc/network/interfaces file"
+echo "your LAN IP is"
+hostname  -I | cut -f1 -d' '
+echo "Your external IP is:"
+curl -s icanhazip.com
+echo "Please type in either your LAN or external IP"
+read -e IP
 cat >>/etc/dnsmasq.conf <<EOF
 address=/wiimmfi.de/$IP
 EOF
