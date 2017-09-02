@@ -212,49 +212,6 @@ read -p "What would you like to do? " menuchoice
 function menu_error {
 echo "$menuchoice is not a valid entry! Please try again."
 }
-
-function menu_git {
-clear
-echo "Please pick from the list of git clones to use"
-echo "1) Polaris [OFFICIAL REPO]"
-echo "2) kyle95wm/BeanJr - This repo uses somewhat really old code but it works. Console activation is also a default. You will need to log into the admin page on port 9009 and go under 'Consoles' and activate any new consoles. New consoles will get error code 23888."
-echo "3) DWC LITE - by kyle95wm - This version has no ban system or admin page. This version is useful for LAN parties where everyone is trusted. There is an option to add IP addresses to a 'kick' table if you wish. THIS GIT WILL SOON BE REMOVED FROM THE LIST AS IT IS NO LONGER MAINTAINED!"
-}
-function git_check {
-if [ $serverclone == 1 ] ; then
-    clear
-    echo "Cloning the official repo....."
-    git clone http://github.com/polaris-/dwc_network_server_emulator
-elif [ $serverclone == 2 ] ; then
-    echo "Cloning BeanJr's repository...."
-    git clone http://github.com/kyle95wm/dwc_network_server_emulator
-elif [ $serverclone == 3 ] ; then
-    echo "Cloning DWC LITE....."
-    git clone https://github.com/kyle95wm/dwc_network_server_emulator_lite
-    mv $PWD/dwc_network_server_emulator_lite/ $PWD/dwc_network_server_emulator/
-else
-    echo "$serverclone is not a valid entry! You must type a number (1-3) from the list."
-    echo "You will not be able to proceed without the git clone!"
-    echo "Please re-run this script and try again."
-    echo "Exiting...."
-    exit 1
-fi
-if [ $? != "0" ] ; then
-    echo "<<<<<<<<PROBLEM CLONING GIT>>>>>>>>"
-    echo "This may be caused by the github package not being properly installed."
-    echo "Please consider re-installing the package manually by typing:"
-    echo "apt-get remove git --purge"
-    echo "apt-get update --fix-missing"
-    echo "apt-get install git"
-    echo "And then try running the script again."
-    echo "Exiting now...."
-    exit 1
-fi
-}
-function menu_git_prompt {
-read -p "Please enter a number now: " serverclone
-}
-
 function admin_page_credentials {
 echo "Please type your user name you would like to use: "
 read -e USR # Waits for username
@@ -368,8 +325,16 @@ else
 fi
 clear
 echo "Now installing required packages..."
-apt-get install apache2 python2.7 python-twisted dnsmasq -y # Install required packages
-echo "Installing Apache, Python 2.7, Python Twisted and DNSMasq....."
+apt-get install apache2 python2.7 python-twisted dnsmasq git -y # Install required packages
+echo "Installing Apache, Python 2.7, Python Twisted, Git and DNSMasq....."
+if [ $1 == "--clone-alt" ] ; then
+    read -p "Please paste in the GitHub URL you wiuld like to clone: " giturl
+    echo "Cloning $giturl"
+    git clone $giturl
+else
+    echo "Cloning the official repo....."
+    git clone http://github.com/polaris-/dwc_network_server_emulator
+fi
 clear
 echo "Now that that's out of the way, let's do some apache stuff"
 echo "Copying virtual hosts to sites-available for virtual hosting of the server"
