@@ -425,6 +425,11 @@ sleep 5s
 clear
 echo "----------Lets configure DNSMASQ now----------"
 sleep 3s
+echo "Adding Google DNS (8.8.8.8) to config"
+cat >>/etc/dnsmasq.conf <<EOF
+server=8.8.8.8
+EOF
+sleep 2s
 echo "What is your EXTERNAL IP?"
 echo "NOTE: If you plan on using this on a LAN, put the IP of your Linux system instead"
 echo "It's also best practice to make this address static in your /etc/network/interfaces file"
@@ -506,97 +511,10 @@ crontab -u $USER -r
 echo "Done!"
 exit
 }
-function test {
-apt-get update --fix-missing
-apt-get install git -y
-git clone http://github.com/kyle95wm/dwc_network_server_emulator
-apt-get update -y --fix-missing
-apt-get install apache2 python2.7 python-twisted dnsmasq -y
-cp $vh/$vh1 $apache/$vh1
-cp $vh/$vh2 $apache/$vh2
-cp $vh/$vh3 $apache/$vh3
-cp $vh/$vh4 $apache/$vh4
-a2ensite $vh1 $vh2 $vh3 $vh4
-a2enmod $mod1 $mod2
-service apache2 restart
-service apache2 reload
-apachectl graceful
-cat >>/etc/apache2/apache2.conf <<EOF
-ServerName localhost
-EOF
-service apache2 restart >/dev/null
-cat >>/etc/dnsmasq.conf <<EOF
-address=/nintendowifi.net/$ip
-EOF
-echo "################### SHOW DNSMASQ CONFIG ####################3"
-cat /etc/dnsmasq.conf
-echo "################# END OF DNSMASQ CONFIG #####################"
-cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF
-{"username":"admin","password":"admin"}
-EOF
-if [ $? == "0" ] ; then
-	echo "Build complete!"
-else
-	echo "BUILD FAILED!"
-fi
-exit
-}
 # End of functions
 if [ "$1" == "-ver" ] ; then
     echo "You are currently running version $ver of the script."
     exit 0
-fi
-if [ "$1" == "--test-build" ] ; then
-        test
-	exit
-elif [ "$1" == "--test-fw-lock" ] ; then
-    firewall-lock
-    exit
-elif [ "$1" == "--test-fw-unlock" ] ; then
-    firewall-unlock
-    exit
-elif [ "$1" == "--test-add-cron" ] ; then
-    add-cron
-elif [ "$1" == "--test-remove-cron" ] ; then
-    remove-cron
-elif [ "$1" == "--test-new-apache" ] ; then
-    # This tests the new apache fix
-    apt-get update --fix-missing
-    apt-get install git -y
-    git clone http://github.com/kyle95wm/dwc_network_server_emulator
-    apt-get update -y --fix-missing
-    apt-get install apache2 python2.7 python-twisted dnsmasq -y
-    cp $vh/$vh1 $apache/$vh1
-    cp $vh/$vh2 $apache/$vh2
-    cp $vh/$vh3 $apache/$vh3
-    cp $vh/$vh4 $apache/$vh4
-    a2ensite $vh1 $vh2 $vh3 $vh4
-    a2enmod $mod1 $mod2
-    service apache2 restart
-    service apache2 reload
-    apachectl graceful
-cat >>/etc/apache2/apache2.conf <<EOF
-ServerName localhost
-EOF
-cat >>/etc/apache2/apache2.conf <<EOF
-HttpProtocolOptions Unsafe LenientMethods Allow0.9
-EOF
-    service apache2 restart >/dev/null
-cat >>/etc/dnsmasq.conf <<EOF
-address=/nintendowifi.net/$ip
-EOF
-echo "################### SHOW DNSMASQ CONFIG ####################3"
-cat /etc/dnsmasq.conf
-echo "################# END OF DNSMASQ CONFIG #####################"
-cat > ./dwc_network_server_emulator/adminpageconf.json <<EOF
-{"username":"admin","password":"admin"}
-EOF
-    if [ $? == "0" ] ; then
-        echo "Build complete!"
-    else
-        echo "BUILD FAILED!"
-    fi
-    exit
 fi
 root_check
 if [ "$1" != "-s" ]; then
