@@ -40,92 +40,6 @@ ver="2.5.8" # This lets the user know what version of the script they are runnin
 # Script Functions
 function wiimmfi {
 # This function will add Wiimmfi/CTGP playability to this server
-echo "Creating Wiimmfi virtual hosts...."
-touch /etc/apache2/sites-available/gamestats2.gs.wiimmfi.de.conf
-touch /etc/apache2/sites-available/gamestats.gs.wiimmfi.de.conf
-touch /etc/apache2/sites-available/nas-naswii-dls1-conntest.wiimmfi.de.conf
-touch /etc/apache2/sites-available/sake.gs.wiimmfi.de.conf
-cat >/etc/apache2/sites-available/gamestats2.gs.wiimmfi.de.conf <<EOF
-<VirtualHost *:80>
-ServerAdmin webmaster@localhost
-ServerName gamestats2.gs.wiimmfi.de
-ServerAlias "gamestats2.gs.wiimmfi.de, gamestats2.gs.wiimmfi.de"
-
-ProxyPreserveHost On
-
-ProxyPass / http://127.0.0.1:9002/
-ProxyPassReverse / http://127.0.0.1:9002/
-</VirtualHost>
-EOF
-
-cat >/etc/apache2/sites-available/gamestats.gs.wiimmfi.de.conf <<EOF
-<VirtualHost *:80>
-ServerAdmin webmaster@localhost
-ServerName gamestats.gs.wiimmfi.de
-ServerAlias "gamestats.gs.wiimmfi.de, gamestats.gs.wiimmfi.de"
-ProxyPreserveHost On
-ProxyPass / http://127.0.0.1:9002/
-ProxyPassReverse / http://127.0.0.1:9002/
-</VirtualHost>
-EOF
-
-cat >/etc/apache2/sites-available/nas-naswii-dls1-conntest.wiimmfi.de.conf <<EOF
-<VirtualHost *:80>
-ServerAdmin webmaster@localhost
-ServerName naswii.wiimmfi.de
-ServerAlias "naswii.wiimmfi.de, naswii.wiimmfi.de"
-ServerAlias "nas.wiimmfi.de"
-ServerAlias "nas.wiimmfi.de, nas.wiimmfi.de"
-ServerAlias "dls1.wiimmfi.de"
-ServerAlias "dls1.wiimmfi.de, dls1.wiimmfi.de"
-ServerAlias "conntest.wiimmfi.de"
-ServerAlias "conntest.wiimmfi.de, conntest.wiimmfi.de"
-ProxyPreserveHost On
-ProxyPass / http://127.0.0.1:9000/
-ProxyPassReverse / http://127.0.0.1:9000/
-</VirtualHost>
-EOF
-
-cat >/etc/apache2/sites-available/sake.gs.wiimmfi.de.conf <<EOF
-<VirtualHost *:80>
-ServerAdmin webmaster@localhost
-ServerName sake.gs.wiimmfi.de
-ServerAlias sake.gs.wiimmfi.de *.sake.gs.wiimmfi.de
-ServerAlias secure.sake.gs.wiimmfi.de
-ServerAlias secure.sake.gs.wiimmfi.de *.secure.sake.gs.wiimmfi.de
-
-ProxyPass / http://127.0.0.1:8000/
-
-CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
-EOF
-
-echo "Done!"
-echo "enabling...."
-a2ensite *.wiimmfi.de.conf
-service apache2 restart
-echo "Adding DNS record to DNSMASQ config"
-echo "----------Lets configure DNSMASQ now----------"
-sleep 3s
-echo "What is your EXTERNAL IP?"
-echo "NOTE: If you plan on using this on a LAN, put the IP of your Linux system instead"
-echo "It's also best practice to make this address static in your /etc/network/interfaces file"
-echo "your LAN IP is"
-hostname  -I | cut -f1 -d' '
-echo "Your external IP is:"
-curl -s icanhazip.com
-echo "Please type in either your LAN or external IP"
-read -e IP
-cat >>/etc/dnsmasq.conf <<EOF
-address=/wiimmfi.de/$IP
-EOF
-service dnsmasq restart
-echo "Checking DNS records...."
-dig @localhost gamestats.gs.wiimmfi.de
-dig @localhost gamestats2.gs.wiimmfi.de
-dig @localhost nas-naswii-dls1-conntest.wiimmfi.de
-dig @localhost sake.gs.wiimmfi.de
-echo "DNS tests done!"
 }
 function root_check {
 # Check if run as root
@@ -408,15 +322,97 @@ cat >>/etc/dnsmasq.conf <<EOF # Adds your IP you provide to the end of the DNSMA
 address=/nintendowifi.net/$IP
 EOF
 clear
+# Wiimmfi support
+echo "Creating Wiimmfi virtual hosts...."
+touch /etc/apache2/sites-available/gamestats2.gs.wiimmfi.de.conf
+touch /etc/apache2/sites-available/gamestats.gs.wiimmfi.de.conf
+touch /etc/apache2/sites-available/nas-naswii-dls1-conntest.wiimmfi.de.conf
+touch /etc/apache2/sites-available/sake.gs.wiimmfi.de.conf
+cat >/etc/apache2/sites-available/gamestats2.gs.wiimmfi.de.conf <<EOF
+<VirtualHost *:80>
+ServerAdmin webmaster@localhost
+ServerName gamestats2.gs.wiimmfi.de
+ServerAlias "gamestats2.gs.wiimmfi.de, gamestats2.gs.wiimmfi.de"
+
+ProxyPreserveHost On
+
+ProxyPass / http://127.0.0.1:9002/
+ProxyPassReverse / http://127.0.0.1:9002/
+</VirtualHost>
+EOF
+
+cat >/etc/apache2/sites-available/gamestats.gs.wiimmfi.de.conf <<EOF
+<VirtualHost *:80>
+ServerAdmin webmaster@localhost
+ServerName gamestats.gs.wiimmfi.de
+ServerAlias "gamestats.gs.wiimmfi.de, gamestats.gs.wiimmfi.de"
+ProxyPreserveHost On
+ProxyPass / http://127.0.0.1:9002/
+ProxyPassReverse / http://127.0.0.1:9002/
+</VirtualHost>
+EOF
+
+cat >/etc/apache2/sites-available/nas-naswii-dls1-conntest.wiimmfi.de.conf <<EOF
+<VirtualHost *:80>
+ServerAdmin webmaster@localhost
+ServerName naswii.wiimmfi.de
+ServerAlias "naswii.wiimmfi.de, naswii.wiimmfi.de"
+ServerAlias "nas.wiimmfi.de"
+ServerAlias "nas.wiimmfi.de, nas.wiimmfi.de"
+ServerAlias "dls1.wiimmfi.de"
+ServerAlias "dls1.wiimmfi.de, dls1.wiimmfi.de"
+ServerAlias "conntest.wiimmfi.de"
+ServerAlias "conntest.wiimmfi.de, conntest.wiimmfi.de"
+ProxyPreserveHost On
+ProxyPass / http://127.0.0.1:9000/
+ProxyPassReverse / http://127.0.0.1:9000/
+</VirtualHost>
+EOF
+
+cat >/etc/apache2/sites-available/sake.gs.wiimmfi.de.conf <<EOF
+<VirtualHost *:80>
+ServerAdmin webmaster@localhost
+ServerName sake.gs.wiimmfi.de
+ServerAlias sake.gs.wiimmfi.de *.sake.gs.wiimmfi.de
+ServerAlias secure.sake.gs.wiimmfi.de
+ServerAlias secure.sake.gs.wiimmfi.de *.secure.sake.gs.wiimmfi.de
+
+ProxyPass / http://127.0.0.1:8000/
+
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+echo "Done!"
+echo "enabling...."
+a2ensite *.wiimmfi.de.conf
+service apache2 restart
+echo "Adding DNS record to DNSMASQ config"
+echo "----------Lets configure DNSMASQ now----------"
+sleep 3s
+echo "What is your EXTERNAL IP?"
+echo "NOTE: If you plan on using this on a LAN, put the IP of your Linux system instead"
+echo "It's also best practice to make this address static in your /etc/network/interfaces file"
+echo "your LAN IP is"
+hostname  -I | cut -f1 -d' '
+echo "Your external IP is:"
+curl -s icanhazip.com
+echo "Please type in either your LAN or external IP"
+read -e IP
+cat >>/etc/dnsmasq.conf <<EOF
+address=/wiimmfi.de/$IP
+EOF
+service dnsmasq restart
+echo "Checking DNS records...."
+dig @localhost gamestats.gs.wiimmfi.de
+dig @localhost gamestats2.gs.wiimmfi.de
+dig @localhost nas-naswii-dls1-conntest.wiimmfi.de
+dig @localhost sake.gs.wiimmfi.de
+echo "Wiimmfi DNS tests done!"
 echo "DNSMasq setup completed!"
 clear
 service dnsmasq restart
 clear
-echo "Recently, a lot of people have asked me to include CTGP support for the server. I decided why not?"
-read -p "Would you like to enable the Wiimmfi virtual hosts? [y/n]: " wiimmfienable
-if [ $wiimmfienable == "y" ] ; then
-    wiimmfi
-fi
 echo "Now, let's set up the admin page login info...."
 sleep 3s
 read -p "Would you like to set up an admin page login? This can be done later by re-running the script. [y/n]: " admin
