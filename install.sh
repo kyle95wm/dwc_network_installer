@@ -38,9 +38,9 @@ UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/mas
 UPDATE_FILE="$0.tmp"
 ver="2.5.8" # This lets the user know what version of the script they are running
 # Script Functions
-function wiimmfi {
+#function wiimmfi {
 # This function will add Wiimmfi/CTGP playability to this server
-}
+#}
 function root_check {
 # Check if run as root
 if [ "$UID" -ne "$ROOT_UID" ] ; then # if the user ID is not root...
