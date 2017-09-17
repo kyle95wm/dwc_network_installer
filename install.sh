@@ -9,7 +9,7 @@ fi
 # Variables used by the script in various sections to pre-fill long commandds
 ROOT_UID="0"
 IP="" # Used for user input
-ip=$(curl -s icanhazip.com) # This variable shows the user's external IP
+ip=$(curl -4 -s icanhazip.com) # This variable shows the user's external IP
 home_ip=$(echo $SSH_CLIENT | awk '{ print $1}')
 apache="/etc/apache2/sites-available" # This is the directory where sites are kept in case they need to be disabled in Apache
 serverclone=""
@@ -105,9 +105,6 @@ if [ -d "dwc_network_server_emulator" ]; then
 else
     echo "git clone not detected in $PWD"
     clear
-    menu_git
-    menu_git_prompt
-    git_check
 fi
 }
 function menu {
@@ -315,7 +312,7 @@ echo "It's also best practice to make this address static in your /etc/network/i
 echo "your LAN IP is"
 hostname  -I | cut -f1 -d' '
 echo "Your external IP is:"
-curl -s icanhazip.com
+curl -4 -s icanhazip.com
 echo "Please type in either your LAN or external IP"
 read -e IP
 cat >>/etc/dnsmasq.conf <<EOF # Adds your IP you provide to the end of the DNSMASQ config file
@@ -396,7 +393,7 @@ echo "It's also best practice to make this address static in your /etc/network/i
 echo "your LAN IP is"
 hostname  -I | cut -f1 -d' '
 echo "Your external IP is:"
-curl -s icanhazip.com
+curl -4 -s icanhazip.com
 echo "Please type in either your LAN or external IP"
 read -e IP
 cat >>/etc/dnsmasq.conf <<EOF
