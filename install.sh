@@ -439,6 +439,10 @@ else
 fi
 }
 function add-cron {
+which crontab
+if [ $? != 0 ] ; then
+apt-get install cron -y
+fi
 echo "Checking if there is a cron available for $USER"
 crontab -l -u $USER |grep "@reboot sh /start-altwfc.sh >/cron-logs/cronlog 2>&1"
 if [ $? != "0" ] ; then
