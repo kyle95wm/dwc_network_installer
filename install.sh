@@ -36,7 +36,7 @@ mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
 UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
 UPDATE_FILE="$0.tmp"
-ver="2.5.8" # This lets the user know what version of the script they are running
+ver="2.6" # This lets the user know what version of the script they are running
 # Script Functions
 #function wiimmfi {
 # This function will add Wiimmfi/CTGP playability to this server
@@ -428,15 +428,10 @@ else
     echo "Okay!"
 fi
 echo "setup complete! quitting now...."
-echo "But wait! For this last and final step, I could optionally add a Cron job to allow your master server to start on boot."
-echo "This will make it so you don't have to keep running 'screen python master_server.py' each time you boot your server"
-echo "It's one of those 'set it and forget it' type things."
-read -p "Would you like to add a cron job? [y/n]: " cron
-if [ $cron == y ] ; then
-    add-cron
-else
-    echo "Okay, I won't add the cron job. You will have to start the server manually."
-fi
+add-cron
+echo "Okay, I lied. Setup is complete for real now. I just added a cron job that starts master_server.py every time you boot up. This way you can 'set it and forget it'."
+read -p "A reboot is required. Please press the ENTER key "
+reboot
 }
 function add-cron {
 which crontab
