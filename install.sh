@@ -38,9 +38,6 @@ UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/mas
 UPDATE_FILE="$0.tmp"
 ver="2.6" # This lets the user know what version of the script they are running
 # Script Functions
-#function wiimmfi {
-# This function will add Wiimmfi/CTGP playability to this server
-#}
 function root_check {
 # Check if run as root
 if [ "$UID" -ne "$ROOT_UID" ] ; then # if the user ID is not root...
@@ -113,7 +110,6 @@ echo "1) Install the server [only run once!]"
 echo "2) Change admin page username/password"
 echo "3) Exit"
 echo "4) Full Uninstall - deletes everything except the packages."
-echo "5) Add Wiimmfi/CTGP support"
 }
 
 function menu_prompt {
@@ -485,7 +481,7 @@ echo
 echo "Hello and welcome to my installation script."
 menu
 menu_prompt
-until [ $menuchoice -le "5" ] ; do
+until [ $menuchoice -le "4" ] ; do
     clear
     menu
     menu_error
@@ -499,10 +495,6 @@ if [ $menuchoice == "3" ] ; then
 fi
 if [ $menuchoice == "4" ] ; then
     full_uninstall
-fi
-if [ $menuchoice == "5" ] ; then
-wiimmfi
-exit
 fi
 if [ $menuchoice == "1" ] ; then
     full_install
