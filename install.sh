@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "WARNING! WARNING! WARNING!"
-echo "While this script may continue to work, I have deemed it depricated."
+echo "While this script may continue to work, I have deemed it DEPRECIATED."
 echo "If you wish to continue to receive support for a DWC installer, please see: https://github.com/kyle95wm/CoWFC"
 read -rp "If you understand the risks of using this script, please press the ENTER key. Otherwise please press ctrl+c to exit."
 # DWC Network Installer script by kyle95wm/beanjr
