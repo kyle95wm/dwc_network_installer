@@ -40,7 +40,7 @@ mod2="proxy_http" # This is related to mod1
 fqdn="localhost" # This variable fixes the fqdn error in Apache
 UPDATE_URL="https://raw.githubusercontent.com/kyle95wm/dwc_network_installer/master/install.sh"
 UPDATE_FILE="$0.tmp"
-ver="2.6" # This lets the user know what version of the script they are running
+ver="3.0" # This lets the user know what version of the script they are running
 # Script Functions
 function root_check {
 # Check if run as root
@@ -244,7 +244,8 @@ if [ $1 == "--clone-alt" ] ; then
     git clone $giturl
 else
     echo "Cloning the official repo....."
-    git clone http://github.com/polaris-/dwc_network_server_emulator
+    #git clone http://github.com/polaris-/dwc_network_server_emulator
+    git clone https://github.com/barronwaffles/dwc_network_server_emulator.git
 fi
 clear
 echo "Now that that's out of the way, let's do some apache stuff"
